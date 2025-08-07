@@ -33,7 +33,7 @@ def get_curr_line(win):
         gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
         cv2.THRESH_BINARY, 11, 2
     )
-    reader = easyocr.Reader(['en'])  # 只识别英文和数字
+    reader = easyocr.Reader(['en'], gpu=True)  # 只识别英文和数字
     results = reader.readtext(binary)
     # cv2.imwrite("output_binary.png", binary)
 

@@ -1,5 +1,7 @@
 # main.py
 import ctypes
+
+import torch
 import game_logic
 ctypes.windll.shcore.SetProcessDpiAwareness(2) 
 import sys
@@ -15,6 +17,8 @@ if __name__ == "__main__":
         log("请先启动游戏")
         exit(1)
     move_window_to_top_left(target_window)
+    print("CUDA 是否可用：", torch.cuda.is_available())
+    print("GPU 名称：", torch.cuda.get_device_name(0) if torch.cuda.is_available() else "无")
     while True:
         if keyboard.is_pressed('esc'):
             log("检测到ESC键，退出程序")
