@@ -6,8 +6,6 @@ import pyautogui
 import pygetwindow as gw
 import win32gui
 import win32con
-import win32com.client
-import time
 import mss
 
 def log(msg):

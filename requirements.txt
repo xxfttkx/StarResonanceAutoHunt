@@ -1,1 +1,10 @@
+keyboard
+pyautogui
+pygetwindow
 easyocr
+opencv-python
+numpy
+torch
+mss
+pillow
+pywin32

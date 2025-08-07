@@ -1,12 +1,10 @@
 # main.py
 import ctypes
-
 import torch
 import game_logic
 ctypes.windll.shcore.SetProcessDpiAwareness(2) 
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
-import time
 import keyboard
 from utils import *
 
@@ -31,8 +29,8 @@ if __name__ == "__main__":
     move_window_to_top_left(target_window)
     print("CUDA 是否可用：", torch.cuda.is_available())
     print("GPU 名称：", torch.cuda.get_device_name(0) if torch.cuda.is_available() else "无")
-    keyboard.add_hotkey('num 2', lambda: switch_line_and_h(target_window,-1))
-    keyboard.add_hotkey('num 3', lambda: switch_line_and_h(target_window,1))
-    keyboard.add_hotkey('esc', exit_program)
+    keyboard.add_hotkey('down', lambda: switch_line_and_h(target_window,-1))
+    keyboard.add_hotkey('up', lambda: switch_line_and_h(target_window,1))
+    keyboard.add_hotkey('~', exit_program)
     keyboard.wait()  # 阻塞，持续监听热键事件
     

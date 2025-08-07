@@ -1,12 +1,7 @@
-
-import os
 import keyboard
 from utils import *
 import pyautogui
-import pygetwindow as gw
 import time
-import pytesseract
-from PIL import Image
 import easyocr
 import re
     
