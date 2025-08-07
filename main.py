@@ -10,6 +10,18 @@ import time
 import keyboard
 from utils import *
 
+def switch_line_and_h(target_window, offset):
+    log(f"尝试切换线路，偏移量: {offset}")
+    line = game_logic.get_curr_line(target_window)
+    if line is None:
+        log("无法获取当前线路，请检查游戏窗口")
+        return
+    game_logic.switch_line(target_window, line + offset)
+    game_logic.wait_and_press_h(target_window)
+
+def exit_program():
+    log("检测到ESC键，退出程序")
+    os._exit(0)  # 强制退出整个程序
 
 if __name__ == "__main__":
     target_window = find_target_window()
@@ -19,25 +31,8 @@ if __name__ == "__main__":
     move_window_to_top_left(target_window)
     print("CUDA 是否可用：", torch.cuda.is_available())
     print("GPU 名称：", torch.cuda.get_device_name(0) if torch.cuda.is_available() else "无")
-    while True:
-        if keyboard.is_pressed('esc'):
-            log("检测到ESC键，退出程序")
-            break
-        if keyboard.is_pressed('num 2'):
-            log("检测到num 2键, line = line - 1")
-            line = game_logic.get_curr_line(target_window)
-            if line is None:
-                log("无法获取当前线路，请检查游戏窗口")
-                continue
-            game_logic.switch_line(target_window, line - 1)
-            game_logic.wait_and_press_h(target_window)
-        if keyboard.is_pressed('num 3'):
-            log("检测到num 2键, line = line + 1")
-            line = game_logic.get_curr_line(target_window)
-            if line is None:
-                log("无法获取当前线路，请检查游戏窗口")
-                continue
-            game_logic.switch_line(target_window, line + 1)
-            game_logic.wait_and_press_h(target_window)
-        time.sleep(0.1)
+    keyboard.add_hotkey('num 2', lambda: switch_line_and_h(target_window,-1))
+    keyboard.add_hotkey('num 3', lambda: switch_line_and_h(target_window,1))
+    keyboard.add_hotkey('esc', exit_program)
+    keyboard.wait()  # 阻塞，持续监听热键事件
     
