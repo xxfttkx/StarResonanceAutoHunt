@@ -41,6 +41,20 @@ def get_client_rect(win):
     right_bottom = win32gui.ClientToScreen(hwnd, (right, bottom))
     return (left_top[0], left_top[1], right_bottom[0], right_bottom[1])
 
+def ltrb_add_win(rect, win):
+    """将窗口位置添加到给定的 (left, top, right, bottom) 矩形"""
+    left, top, right, bottom = rect
+    # 获取窗口在屏幕上的位置
+    win_left, win_top = get_client_rect(win)[:2]  # 获取窗口客户区左上角坐标
+    return (left + win_left, top + win_top, right + win_left, bottom + win_top)
+
+def point_add_win(point, win):
+    """将窗口位置添加到给定的 (x, y) 点"""
+    x, y = point
+    # 获取窗口在屏幕上的位置
+    win_left, win_top = get_client_rect(win)[:2]  # 获取窗口客户区左上角坐标
+    return (x + win_left, y + win_top)
+
 def get_window_width_and_height(win):
     """获取窗口的宽高"""
     hwnd = win._hWnd  # 获取窗口句柄
@@ -113,3 +127,11 @@ def screenshot_window(win):
     except Exception as e:
         log(f"截图失败: {e}")
         return None
+
+def xywh_to_ltrb(x, y, w, h):
+    """将 (x, y, w, h) 转换为 (left, top, right, bottom)"""
+    return (x, y, x + w, y + h)
+
+def ltrb_to_xywh(left, top, right, bottom):
+    """将 (left, top, right, bottom) 转换为 (x, y, w, h)"""
+    return (left, top, right - left, bottom - top)

@@ -26,11 +26,12 @@ if __name__ == "__main__":
     if target_window is None:
         log("请先启动游戏")
         exit(1)
-    move_window_to_top_left(target_window)
+    # screenshot_window(target_window)  # 保存初始截图以便调试
+    # move_window_to_top_left(target_window)
     print("CUDA 是否可用：", torch.cuda.is_available())
     print("GPU 名称：", torch.cuda.get_device_name(0) if torch.cuda.is_available() else "无")
-    keyboard.add_hotkey('down', lambda: switch_line_and_h(target_window,-1))
-    keyboard.add_hotkey('up', lambda: switch_line_and_h(target_window,1))
+    keyboard.add_hotkey('-', lambda: switch_line_and_h(target_window,-1))
+    keyboard.add_hotkey('+', lambda: switch_line_and_h(target_window,1))
     keyboard.add_hotkey('~', exit_program)
     keyboard.wait()  # 阻塞，持续监听热键事件
     
