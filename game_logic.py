@@ -18,7 +18,7 @@ def get_curr_line(win):
     roi_h = rect[3] - rect[1]
     # screenshot_window(win)  # 截图窗口以便后续处理
     # 截图
-    screenshot = pyautogui.screenshot(region=(roi_x, roi_y, roi_w, roi_h))
+    screenshot = capture_roi(roi_x, roi_y, roi_w, roi_h)
     np_image = np.array(screenshot)
     # ✅ 转为灰度图
     gray = cv2.cvtColor(np_image, cv2.COLOR_RGB2GRAY)
@@ -98,7 +98,7 @@ def wait_and_press_h(win):
     start_time = time.time()
 
     while True:
-        color = pyautogui.screenshot().getpixel((px, py))
+        color = get_pixel_color(px, py)
         if not is_black(color):
             break
 

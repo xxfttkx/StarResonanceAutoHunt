@@ -47,6 +47,17 @@ def get_window_width_and_height(win):
     rect = win32gui.GetClientRect(hwnd)
     return (rect[2] - rect[0]), (rect[3] - rect[1])
 
+def get_pixel_color(x, y):
+    with mss.mss() as sct:
+        # 截取 x, y 处 1x1 的区域
+        monitor = {"top": y, "left": x, "width": 1, "height": 1}
+        sct_img = sct.grab(monitor)
+
+        # 获取图像像素的 RGB 值（注意：sct_img是BGRA）
+        pixel = sct_img.pixel(0, 0)  # (B, G, R, A)
+        r, g, b = pixel[2], pixel[1], pixel[0]  # 转换为 RGB
+        return (r, g, b)
+    
 def capture_roi(x,y, w, h):
     """截取指定区域的屏幕截图"""
     try:
