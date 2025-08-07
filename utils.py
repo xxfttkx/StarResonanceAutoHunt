@@ -1,6 +1,9 @@
 from datetime import datetime
 import os
+import re
+from PIL import Image
 import cv2
+import easyocr
 import numpy as np
 import pyautogui
 import pygetwindow as gw
@@ -135,3 +138,32 @@ def xywh_to_ltrb(x, y, w, h):
 def ltrb_to_xywh(left, top, right, bottom):
     """将 (left, top, right, bottom) 转换为 (x, y, w, h)"""
     return (left, top, right - left, bottom - top)
+
+def ltrb_to_num(rect):
+    screenshot = capture_roi(*ltrb_to_xywh(*rect))
+    np_image = np.array(screenshot)
+    # ✅ 转为灰度图
+    gray = cv2.cvtColor(np_image, cv2.COLOR_RGB2GRAY)
+
+    # ✅ 自适应阈值二值化（提升对比度，适应复杂背景）
+    binary = cv2.adaptiveThreshold(
+        gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+        cv2.THRESH_BINARY, 11, 2
+    )
+    reader = easyocr.Reader(['ch_sim', 'en'], gpu=True)  # 只识别英文和数字
+    results = reader.readtext(binary)
+    cv2.imwrite("output_binary.png", binary)
+
+    longest_num = None
+    for (_, text, prob) in results:
+        log(f"识别结果: {text}, 置信度: {prob:.2f}")
+        nums = re.findall(r'\d+', text)
+        longest_num = max(nums, key=len) if nums else None
+            
+
+    if longest_num:
+        return int(longest_num)
+    else:
+        log("未识别到数字")
+        image = Image.fromarray(np_image)
+        save_screenshot(image)  # 保存截图以便调试
