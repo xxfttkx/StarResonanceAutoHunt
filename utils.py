@@ -82,7 +82,7 @@ def capture_roi(x,y, w, h):
             monitor = {"left": x, "top": y, "width": w, "height": h}
             sct_img = sct.grab(monitor)
             img = np.array(sct_img)# [:, :, :3]  # 去掉 alpha 通道
-            img = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
+            img = cv2.cvtColor(img, cv2.COLOR_BGRA2RGB)
         return img
     except Exception as e:
         log(f"截图失败: {e}")
@@ -124,8 +124,9 @@ def screenshot_window(win):
         x1, y1, x2, y2 = get_client_rect(win)
         width = x2 - x1
         height = y2 - y1
-        screenshot = pyautogui.screenshot(region=(x1, y1, width, height))
-        save_screenshot(screenshot)  # 保存截图到指定目录
+        screenshot = capture_roi(x1, y1, width, height)
+        img = Image.fromarray(screenshot)
+        save_screenshot(img)  # 保存截图到指定目录
         return screenshot
     except Exception as e:
         log(f"截图失败: {e}")

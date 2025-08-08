@@ -38,7 +38,10 @@ def switch_line(win, offset):
         if not win.isActive:
             win.activate()
             time.sleep(0.5)  # 稍等窗口激活
+    except Exception as e:
+        log(f"activate_win failed:{e}")
 
+    try:
         # 按下切线快捷键 p
         pyautogui.press('p')
         time.sleep(1)  # 等待切线面板弹出
@@ -60,8 +63,8 @@ def switch_line(win, offset):
         pyautogui.press('enter')
         log(f"已切换到线路 {line}")
 
-    except IndexError:
-        log(f"switch_line failed")
+    except Exception as e:
+        log(f"switch_line failed:{e}")
 
 def wait_and_press_h(win):
     time.sleep(2)
@@ -79,7 +82,7 @@ def wait_and_press_h(win):
         # 判断是否接近黑色（R/G/B 都低于阈值）
         return all(channel < threshold for channel in rgb)
 
-    timeout = 20  # 最多等待 20 秒
+    timeout = 14  # 最多等待 14 秒
     start_time = time.time()
 
     while True:

@@ -1,17 +1,20 @@
 # main.py
 import ctypes
+ctypes.windll.shcore.SetProcessDpiAwareness(2) 
 import torch
 import game_logic
-ctypes.windll.shcore.SetProcessDpiAwareness(2) 
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
 import keyboard
 from utils import *
 
 def switch_line_and_h(target_window, offset):
-    log(f"尝试切换线路，偏移量: {offset}")
-    game_logic.switch_line(target_window, offset)
-    game_logic.wait_and_press_h(target_window)
+    try:
+        log(f"尝试切换线路，偏移量: {offset}")
+        game_logic.switch_line(target_window, offset)
+        game_logic.wait_and_press_h(target_window)
+    except Exception as e:
+        log(f"热键执行失败: {e}")
 
 def exit_program():
     log("检测到ESC键，退出程序")
