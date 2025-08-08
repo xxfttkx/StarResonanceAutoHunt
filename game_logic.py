@@ -11,11 +11,17 @@ def get_curr_line(win):
 
     # 手动设定线路显示区域的 ROI（相对于客户区）
     rect = (189, 236, 218, 252)  # ltrb — 你需要自己测定
-    rect_all = (42,236,251,252)
-    rect = get_scale_area(rect_all, *get_window_width_and_height(win))
+    line = None
+    rect = get_scale_area(rect, *get_window_width_and_height(win))
     rect = ltrb_add_win(rect, win)  # 将窗口位置添加到矩形中
+    line = ltrb_to_full_num(rect)
+    if not line:
+        rect_all = (42,236,251,252)
+        rect = get_scale_area(rect_all, *get_window_width_and_height(win))
+        rect = ltrb_add_win(rect, win)  # 将窗 口位置添加到矩形中
+        line = ltrb_to_num(rect)
     
-    line = ltrb_to_num(rect)
+    
 
     if line:
         log(f"当前线路识别结果: {line}")

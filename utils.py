@@ -139,6 +139,35 @@ def ltrb_to_xywh(left, top, right, bottom):
     """将 (left, top, right, bottom) 转换为 (x, y, w, h)"""
     return (left, top, right - left, bottom - top)
 
+def ltrb_to_full_num(rect):
+    screenshot = capture_roi(*ltrb_to_xywh(*rect))
+    np_image = np.array(screenshot)
+    # ✅ 转为灰度图
+    gray = cv2.cvtColor(np_image, cv2.COLOR_RGB2GRAY)
+
+    # ✅ 自适应阈值二值化（提升对比度，适应复杂背景）
+    binary = cv2.adaptiveThreshold(
+        gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+        cv2.THRESH_BINARY, 11, 2
+    )
+    reader = easyocr.Reader(['en'], gpu=True)  # 只识别英文和数字
+    results = reader.readtext(binary)
+    # cv2.imwrite("output_binary.png", binary)
+
+    digits = []
+
+    for (_, text, prob) in results:
+        log(f"识别结果: {text}, 置信度: {prob:.2f}")
+        if prob > 0.5:  # 过滤低置信度的结果
+            nums = re.findall(r'\d+', text)
+            digits.extend(nums)
+
+    if digits:
+        line = int(''.join(digits))
+        log(f"当前线路识别结果: {line}")
+        return line
+    return None
+
 def ltrb_to_num(rect):
     screenshot = capture_roi(*ltrb_to_xywh(*rect))
     np_image = np.array(screenshot)
