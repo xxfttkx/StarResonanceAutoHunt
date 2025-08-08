@@ -180,8 +180,8 @@ def ltrb_to_num(rect):
         cv2.THRESH_BINARY, 11, 2
     )
     reader = easyocr.Reader(['ch_sim', 'en'], gpu=True)  # 只识别英文和数字
-    results = reader.readtext(binary)
-    cv2.imwrite("output_binary.png", binary)
+    results = reader.readtext(gray)
+    cv2.imwrite("output.png", gray)
 
     longest_num = None
     for (_, text, prob) in results:

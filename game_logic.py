@@ -10,12 +10,13 @@ def get_curr_line(win):
     # 获取客户区屏幕坐标
 
     # 手动设定线路显示区域的 ROI（相对于客户区）
-    rect = (189, 236, 218, 252)  # ltrb — 你需要自己测定
+    rect = (1479,97,1554,127)
     line = None
     rect = get_scale_area(rect, *get_window_width_and_height(win))
     rect = ltrb_add_win(rect, win)  # 将窗口位置添加到矩形中
-    line = ltrb_to_full_num(rect)
+    line = ltrb_to_num(rect)
     if not line:
+        log('未能从切换频道窗口识别出线路号，尝试识别左上线路号')
         rect_all = (42,236,251,252)
         rect = get_scale_area(rect_all, *get_window_width_and_height(win))
         rect = ltrb_add_win(rect, win)  # 将窗 口位置添加到矩形中
@@ -31,7 +32,7 @@ def get_curr_line(win):
         
 
 
-def switch_line(win, line):
+def switch_line(win, offset):
     """激活窗口并切换线路"""
     try:
         if not win.isActive:
@@ -41,7 +42,10 @@ def switch_line(win, line):
         # 按下切线快捷键 p
         pyautogui.press('p')
         time.sleep(1)  # 等待切线面板弹出
-
+        line = get_curr_line(win)
+        line += offset
+        while line>200:
+            line-=100
         # 点击线路输入框（根据实际位置修改）
         input_box_pos = (1492,1007)  # 示例为屏幕中心，请替换为实际坐标
         input_box_pos = get_scale_point(input_box_pos, *get_window_width_and_height(win))

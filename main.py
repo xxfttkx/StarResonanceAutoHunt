@@ -10,11 +10,7 @@ from utils import *
 
 def switch_line_and_h(target_window, offset):
     log(f"尝试切换线路，偏移量: {offset}")
-    line = game_logic.get_curr_line(target_window)
-    if line is None:
-        log("无法获取当前线路，请检查游戏窗口")
-        return
-    game_logic.switch_line(target_window, line + offset)
+    game_logic.switch_line(target_window, offset)
     game_logic.wait_and_press_h(target_window)
 
 def exit_program():
@@ -26,7 +22,7 @@ if __name__ == "__main__":
     if target_window is None:
         log("请先启动游戏")
         exit(1)
-    # screenshot_window(target_window)  # 保存初始截图以便调试
+    screenshot_window(target_window)  # 保存初始截图以便调试
     # move_window_to_top_left(target_window)
     print("CUDA 是否可用：", torch.cuda.is_available())
     print("GPU 名称：", torch.cuda.get_device_name(0) if torch.cuda.is_available() else "无")
