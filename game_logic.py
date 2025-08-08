@@ -37,14 +37,14 @@ def switch_line(win, offset):
     try:
         if not win.isActive:
             win.activate()
-            time.sleep(0.5)  # 稍等窗口激活
+            time.sleep(0.2)  # 稍等窗口激活
     except Exception as e:
         log(f"activate_win failed:{e}")
 
     try:
         # 按下切线快捷键 p
         pyautogui.press('p')
-        time.sleep(1)  # 等待切线面板弹出
+        time.sleep(0.3)  # 等待切线面板弹出
         line = get_curr_line(win)
         line += offset
         while line>200:
