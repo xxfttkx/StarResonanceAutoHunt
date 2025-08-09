@@ -1,6 +1,7 @@
 from datetime import datetime
 import os
 import re
+import time
 from PIL import Image
 import cv2
 import easyocr
@@ -10,6 +11,7 @@ import pygetwindow as gw
 import win32gui
 import win32con
 import mss
+import ctypes
 
 def log(msg):
     """带时间前缀的打印函数"""
@@ -197,3 +199,32 @@ def ltrb_to_num(rect):
         log("未识别到数字")
         image = Image.fromarray(np_image)
         save_screenshot(image)  # 保存截图以便调试
+
+# Windows API SendInput 模拟鼠标移动
+SendInput = ctypes.windll.user32.SendInput
+
+class MOUSEINPUT(ctypes.Structure):
+    _fields_ = [("dx", ctypes.c_long),
+                ("dy", ctypes.c_long),
+                ("mouseData", ctypes.c_ulong),
+                ("dwFlags", ctypes.c_ulong),
+                ("time", ctypes.c_ulong),
+                ("dwExtraInfo", ctypes.POINTER(ctypes.c_ulong))]
+
+class INPUT(ctypes.Structure):
+    _fields_ = [("type", ctypes.c_ulong),
+                ("mi", MOUSEINPUT)]
+
+def move_mouse_relative(x, y):
+    mi = MOUSEINPUT(x, y, 0, 0x0001, 0, None)  # MOUSEEVENTF_MOVE = 0x0001
+    inp = INPUT(0, mi)
+    SendInput(1, ctypes.byref(inp), ctypes.sizeof(inp))
+
+def move_mouse():
+    move_mouse_relative(0,200)
+    delay = 0.01
+    all = 3000
+    second = 3
+    for _ in range(int(second/delay)):
+        move_mouse_relative(int(delay*all/second), 0)  # 每次移动 2
+        time.sleep(delay)

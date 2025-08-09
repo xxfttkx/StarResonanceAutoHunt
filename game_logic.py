@@ -98,3 +98,13 @@ def wait_and_press_h(win):
 
     log("切线结束，发送战斗按键 H")
     keyboard.press_and_release('h')
+
+def move_cursor(win):
+    try:
+        if not win.isActive:
+            win.activate()
+            time.sleep(0.2)  # 稍等窗口激活
+    except Exception as e:
+        log(f"activate_win failed:{e}")
+    # 每次右移 2 像素，移动 50 次
+    move_mouse()

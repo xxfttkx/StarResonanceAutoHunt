@@ -8,3 +8,4 @@ torch
 mss
 pillow
 pywin32
+python-socketio[asyncio_client]==5.9.0
