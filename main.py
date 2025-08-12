@@ -10,13 +10,15 @@ import keyboard
 from utils import *
 from listener import listen, set_monster_alive_callback, set_not_monster_alive_callback
 import asyncio
-
+import threading
 class AutoHuntController:
     def __init__(self, target_window):
         self.target_window = target_window
         self.auto_switch = False
         self.count = 0
         self.auto_switch_set = False
+        self.lock = threading.Lock()  # 真锁
+
 
     def switch_line_and_h(self, offset):
         try:
@@ -29,19 +31,27 @@ class AutoHuntController:
     def notify_monster_alive(self):
         self.count = 0
 
+    def _switch_line_job(self):
+        self.auto_switch = False
+        self.count = 0
+        log("2s没发现神奇动物，自动切线")
+        game_logic.switch_line(self.target_window, -1)
+        game_logic.wait_and_press_h(self.target_window)
+        time.sleep(3)
+        self.auto_switch = True
+        self.count = 0
+
     def notify_not_monster_alive(self):
-        if self.auto_switch and self.auto_switch_set:
-            self.count += 1
-            if self.count > 60:
-                self.auto_switch = False
-                self.count = 0
-                log("3s没发现神奇动物，自动切线")
-                game_logic.switch_line(self.target_window, -1)
-                game_logic.wait_and_press_h(self.target_window)
-                # game_logic.move_cursor(self.target_window)
-                time.sleep(3)
-                self.auto_switch = True
-                self.count = 0
+        # 尝试获取锁，如果拿不到锁说明有任务在执行，直接跳过
+        if not self.lock.acquire(blocking=False):
+            return
+        try:
+            if self.auto_switch and self.auto_switch_set:
+                self.count += 1
+                if self.count > 40:
+                    threading.Thread(target=self._switch_line_job).start()
+        finally:
+            self.lock.release()
     
     def exit_program(self):
         log("检测到ESC键，退出程序")
