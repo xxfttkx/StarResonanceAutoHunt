@@ -44,7 +44,7 @@ def switch_line(win, offset):
     try:
         # 按下切线快捷键 p
         pyautogui.press('p')
-        time.sleep(0.3)  # 等待切线面板弹出
+        time.sleep(0.5)  # 等待切线面板弹出
         line = get_curr_line(win)
         line += offset
         while line>200:
