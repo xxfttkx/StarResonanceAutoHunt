@@ -19,7 +19,6 @@ class AutoHuntController:
         self.auto_switch_set = False
         self.lock = threading.Lock()  # 真锁
 
-
     def switch_line_and_h(self, offset):
         try:
             log(f"尝试切换线路，偏移量: {offset}")
@@ -54,7 +53,7 @@ class AutoHuntController:
             self.lock.release()
     
     def exit_program(self):
-        log("检测到ESC键，退出程序")
+        log("检测到 / 键，退出程序")
         os._exit(0)
 
     def changeAutoSwitch(self):
@@ -70,9 +69,10 @@ class AutoHuntController:
 
 async def main():
     target_window = find_target_window()
-    if target_window is None:
+    while target_window is None:
         log("请先启动游戏")
-        return
+        time.sleep(10)
+        target_window = find_target_window()
     controller = AutoHuntController(target_window)
     # screenshot_window(target_window)
     print("CUDA 是否可用：", torch.cuda.is_available())
@@ -88,12 +88,13 @@ async def main():
     keyboard.add_hotkey('+', lambda: controller.switch_line_and_h(1))
     keyboard.add_hotkey('/', controller.exit_program)
     keyboard.add_hotkey('.', controller.changeAutoSwitch)
-    try:
-        await listen()
-    except Exception as e:
-        log(f"监听过程中发生错误: {e}")
-    keyboard.wait()  # 阻塞，持续监听热键事件
-
+    while True:
+        try:
+            await listen()
+        except Exception as e:
+            log(f"监听过程中发生错误: {e}")
+            time.sleep(10)
+            
 if __name__ == '__main__':
     sys.stdout.reconfigure(encoding='utf-8')
     asyncio.run(main())

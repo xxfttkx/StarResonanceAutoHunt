@@ -67,7 +67,7 @@ def switch_line(win, offset):
         log(f"switch_line failed:{e}")
 
 def wait_and_press_h(win):
-    time.sleep(2)
+    time.sleep(5)
     log("等待切线完成（黑屏结束）...")
 
     x1, y1, x2, y2 = get_client_rect(win)
