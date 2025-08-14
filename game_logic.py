@@ -42,9 +42,9 @@ def switch_line(win, offset):
         log(f"activate_win failed:{e}")
 
     try:
-        # 按下切线快捷键 p
-        pyautogui.press('p')
-        time.sleep(0.5)  # 等待切线面板弹出
+        # # 按下切线快捷键 p
+        # pyautogui.press('p')
+        # time.sleep(0.5)  # 等待切线面板弹出
         line = get_curr_line(win)
         line += offset
         while line>200:
@@ -98,6 +98,10 @@ def wait_and_press_h(win):
 
     log("切线结束，发送战斗按键 H")
     keyboard.press_and_release('h')
+    time.sleep(0.3)
+    keyboard.press_and_release('esc')
+    time.sleep(0.3)
+    keyboard.press_and_release('p')
 
 def move_cursor(win):
     try:
