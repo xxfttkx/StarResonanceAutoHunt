@@ -18,11 +18,20 @@ class AutoHuntController:
         self.count = 0
         self.auto_switch_set = False
         self.lock = threading.Lock()  # 真锁
+        self.current_line = 0  # 当前线路编号
+        self.target_line = 0  # 目标线路编号
 
     def switch_line_and_h(self, offset):
         try:
             log(f"尝试切换线路，偏移量: {offset}")
-            game_logic.switch_line(self.target_window, offset)
+            current_line = game_logic.get_curr_line(self.target_window)
+            self.current_line = current_line  # 更新当前线路编号
+            if self.current_line != current_line:
+                self.current_line = current_line
+                self.target_line = current_line + offset
+            else:
+                self.target_line += offset
+            game_logic.switch_line(self.target_window, self.target_line)
             game_logic.wait_and_press_h(self.target_window)
         except Exception as e:
             log(f"热键执行失败: {e}")
@@ -34,8 +43,7 @@ class AutoHuntController:
         self.auto_switch = False
         self.count = 0
         log("2s没发现神奇动物，自动切线")
-        game_logic.switch_line(self.target_window, -1)
-        game_logic.wait_and_press_h(self.target_window)
+        self.switch_line_and_h(self, -1)  # 切换到上一条线
         time.sleep(3)
         self.auto_switch = True
         self.count = 0

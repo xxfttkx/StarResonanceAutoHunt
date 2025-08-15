@@ -22,7 +22,8 @@ def get_curr_line(win):
         rect = ltrb_add_win(rect, win)  # 将窗 口位置添加到矩形中
         line = ltrb_to_num(rect)
     
-    
+    while line>200:
+        line-=100
 
     if line:
         log(f"当前线路识别结果: {line}")
@@ -32,7 +33,7 @@ def get_curr_line(win):
         
 
 
-def switch_line(win, offset):
+def switch_line(win, line):
     """激活窗口并切换线路"""
     try:
         if not win.isActive:
@@ -45,10 +46,7 @@ def switch_line(win, offset):
         # # 按下切线快捷键 p
         # pyautogui.press('p')
         # time.sleep(0.5)  # 等待切线面板弹出
-        line = get_curr_line(win)
-        line += offset
-        while line>200:
-            line-=100
+        
         # 点击线路输入框（根据实际位置修改）
         input_box_pos = (1492,1007)  # 示例为屏幕中心，请替换为实际坐标
         input_box_pos = get_scale_point(input_box_pos, *get_window_width_and_height(win))
