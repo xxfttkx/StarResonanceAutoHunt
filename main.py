@@ -8,7 +8,7 @@ import sys
 sys.stdout.reconfigure(encoding='utf-8')
 import keyboard
 from utils import *
-from listener import listen, set_monster_alive_callback, set_not_monster_alive_callback
+from listener import listen, set_monster_alive_callback, set_not_monster_alive_callback, set_monster_dead_callback
 import asyncio
 import threading
 class AutoHuntController:
@@ -25,12 +25,11 @@ class AutoHuntController:
         try:
             log(f"尝试切换线路，偏移量: {offset}")
             current_line = game_logic.get_curr_line(self.target_window)
-            self.current_line = current_line  # 更新当前线路编号
             if self.current_line != current_line:
                 self.current_line = current_line
                 self.target_line = current_line + offset
             else:
-                self.target_line += offset
+                self.target_line = self.target_line + offset
             game_logic.switch_line(self.target_window, self.target_line)
             game_logic.wait_and_press_h(self.target_window)
         except Exception as e:
@@ -42,8 +41,7 @@ class AutoHuntController:
     def _switch_line_job(self):
         self.auto_switch = False
         self.count = 0
-        log("2s没发现神奇动物，自动切线")
-        self.switch_line_and_h(self, -1)  # 切换到上一条线
+        self.switch_line_and_h(-1)  # 切换到上一条线
         time.sleep(3)
         self.auto_switch = True
         self.count = 0
@@ -55,8 +53,19 @@ class AutoHuntController:
         try:
             if self.auto_switch and self.auto_switch_set:
                 self.count += 1
-                if self.count > 40:
+                over_time = 2
+                if self.count > over_time*20:
+                    log(f"{over_time}s没发现神奇动物，自动切线")
                     threading.Thread(target=self._switch_line_job).start()
+        finally:
+            self.lock.release()
+    
+    def notify_monster_dead(self):
+        if not self.lock.acquire(blocking=False):
+            return
+        try:
+            if self.auto_switch and self.auto_switch_set:
+                threading.Thread(target=self._switch_line_job).start()
         finally:
             self.lock.release()
     
@@ -90,6 +99,7 @@ async def main():
     # 注册事件回调
     set_monster_alive_callback(controller.notify_monster_alive)
     set_not_monster_alive_callback(controller.notify_not_monster_alive)
+    set_monster_dead_callback(controller.notify_monster_dead)  # 死亡事件直接切线
 
     # 绑定热键
     keyboard.add_hotkey('-', lambda: controller.switch_line_and_h(-1))
