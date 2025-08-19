@@ -20,6 +20,7 @@ class AutoHuntController:
         self.lock = threading.Lock()  # 真锁
         self.current_line = 0  # 当前线路编号
         self.target_line = 0  # 目标线路编号
+        self.offset = 1
 
     def switch_line_and_h(self, offset):
         try:
@@ -41,8 +42,7 @@ class AutoHuntController:
     def _switch_line_job(self):
         self.auto_switch = False
         self.count = 0
-        self.switch_line_and_h(-1)  # 切换到上一条线
-        time.sleep(3)
+        self.switch_line_and_h(self.offset)  # 切换到上一条线
         self.auto_switch = True
         self.count = 0
 
