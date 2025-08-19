@@ -11,8 +11,20 @@ from utils import *
 from listener import listen, set_monster_alive_callback, set_not_monster_alive_callback, set_monster_dead_callback
 import asyncio
 import threading
+import argparse
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-o", "--offset",        # 同时支持 -o 和 --offset
+        type=int,
+        default=-1,
+        help="自动切线时的偏移量"
+    )
+    return parser.parse_args()
+
 class AutoHuntController:
-    def __init__(self, target_window):
+    def __init__(self, target_window, offset=-1):
         self.target_window = target_window
         self.auto_switch = False
         self.count = 0
@@ -20,7 +32,7 @@ class AutoHuntController:
         self.lock = threading.Lock()  # 真锁
         self.current_line = 0  # 当前线路编号
         self.target_line = 0  # 目标线路编号
-        self.offset = -1
+        self.offset = offset
 
     def switch_line_and_h(self, offset):
         try:
@@ -86,11 +98,13 @@ class AutoHuntController:
 
 async def main():
     target_window = find_target_window()
+    args = parse_args()
+    offset = args.offset
     while target_window is None:
         log("请先启动游戏")
         time.sleep(10)
         target_window = find_target_window()
-    controller = AutoHuntController(target_window)
+    controller = AutoHuntController(target_window, offset)
     # screenshot_window(target_window)
     print("CUDA 是否可用：", torch.cuda.is_available())
     if torch.cuda.is_available():
