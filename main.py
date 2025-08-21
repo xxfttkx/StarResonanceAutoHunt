@@ -66,7 +66,7 @@ class AutoHuntController:
             if self.auto_switch and self.auto_switch_set:
                 self.count += 1
                 over_time = 2
-                if self.count > over_time*20:
+                if self.count > over_time*10:
                     log(f"{over_time}s没发现神奇动物，自动切线")
                     threading.Thread(target=self._switch_line_job).start()
         finally:
