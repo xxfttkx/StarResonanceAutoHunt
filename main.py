@@ -116,8 +116,8 @@ async def main():
     set_monster_dead_callback(controller.notify_monster_dead)  # 死亡事件直接切线
 
     # 绑定热键
-    keyboard.add_hotkey('-', lambda: controller.switch_line_and_h(-1))
-    keyboard.add_hotkey('+', lambda: controller.switch_line_and_h(1))
+    keyboard.add_hotkey('-', lambda: controller.switch_line_and_h(-offset))
+    keyboard.add_hotkey('+', lambda: controller.switch_line_and_h(offset))
     keyboard.add_hotkey('/', controller.exit_program)
     keyboard.add_hotkey('.', controller.changeAutoSwitch)
     while True:
