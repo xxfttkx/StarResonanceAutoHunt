@@ -115,6 +115,7 @@ async def main():
     set_not_monster_alive_callback(controller.notify_not_monster_alive)
     set_monster_dead_callback(controller.notify_monster_dead)  # 死亡事件直接切线
 
+    offset = abs(offset)  # 确保偏移量为正数
     # 绑定热键
     keyboard.add_hotkey('-', lambda: controller.switch_line_and_h(-offset))
     keyboard.add_hotkey('+', lambda: controller.switch_line_and_h(offset))
