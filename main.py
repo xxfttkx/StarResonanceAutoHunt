@@ -43,6 +43,11 @@ class AutoHuntController:
                 self.target_line = current_line + offset
             else:
                 self.target_line = self.target_line + offset
+            # 线路数越界
+            if self.target_line > 200:
+                self.target_line = 1
+            if self.target_line < 1:
+                self.target_line = 200
             game_logic.switch_line(self.target_window, self.target_line)
             game_logic.wait_and_press_h(self.target_window)
         except Exception as e:
@@ -66,7 +71,7 @@ class AutoHuntController:
             if self.auto_switch and self.auto_switch_set:
                 self.count += 1
                 over_time = 2
-                if self.count > over_time*10:
+                if self.count > over_time:
                     log(f"{over_time}s没发现神奇动物，自动切线")
                     threading.Thread(target=self._switch_line_job).start()
         finally:
