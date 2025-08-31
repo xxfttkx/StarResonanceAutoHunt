@@ -1,68 +1,51 @@
 import asyncio
 import socketio
+import aiohttp
 from utils import log
 
 sio = socketio.AsyncClient()
 
-damage_map = {}  # 存 player_id -> 伤害值
+ENEMY_URL = "http://localhost:8989/api/enemies"
+POLL_INTERVAL_SEC = 1
+TARGET_UUIDS = {19276: "粉猪", 19277: "风猪"}
 
 on_monster_alive = None  # 回调函数
 on_not_monster_alive = None  # 回调函数
 on_monster_dead = None  # 回调函数
 
-@sio.event
-async def connect():
-    log("连接成功")
-
-@sio.event
-async def disconnect():
-    log("连接断开")
-
-@sio.on('data')
-def on_data(data):
-    users = data.get("user", {})
-    alive_monster = False
-    for player_id, info in users.items():
-        total_damage = info.get("total_damage", {})
-        damage = total_damage.get("normal", 0)
-
-        old_damage = damage_map.get(player_id, 0)
-        if old_damage != damage:
-            if damage-old_damage<50 :
-                alive_monster = True
-            damage_map[player_id] = damage
-            # log(f"玩家 {player_id} 造成有效伤害由{old_damage}变更为: {damage} , damage-old_damage<50 = {damage-old_damage<50}")
-    if alive_monster:
-        # log("场上有神奇生物")
-        if callable(on_monster_alive):
-            on_monster_alive()  # 调用回调
-    else:
-        # log("场上无神奇生物")
-        if callable(on_not_monster_alive):
-            on_not_monster_alive()  # 调用回调
-
-# target: 粉-19276 风-19277
-@sio.on('targetDead')
-def on_targetDead(data):
-    log(f"收到服务器的死亡事件: {data}")
-    target = data.get('uuid', 0)
-    target = int(target)  # 确保是整数类型
-    if target == 19276:
-        log("粉猪死亡")
-        if callable(on_monster_dead):
-            on_monster_dead()  # 调用回调
-    elif target == 19277:
-        log("风猪死亡")
-        if callable(on_monster_dead):
-            on_monster_dead()  # 调用回调
-    
-    # 这里就可以触发换线逻辑
-
-        
 
 async def listen():
-    await sio.connect('http://localhost:8989')
-    await sio.wait()
+    async with aiohttp.ClientSession() as session:
+        targethp = 0
+        while True:
+            async with session.get(ENEMY_URL) as response:
+                if response.status != 200:
+                    log(f"GET {ENEMY_URL} -> HTTP {response.status}")
+                    return
+                data = await response.json(content_type=None)
+                target = data.get('enemy', {})
+                if '19276' in target.keys():
+                    #丢包
+                    if targethp == target['19276']['hp'] and targethp<1000:
+                        if callable(on_not_monster_alive):
+                            on_not_monster_alive()
+                    else:
+                        targethp = target['19276']['hp']
+                        if callable(on_monster_alive):
+                            on_monster_alive()
+                elif '19277' in target.keys():
+                    if targethp == target['19277']['hp'] and targethp<1000:
+                        if callable(on_not_monster_alive):
+                            on_not_monster_alive()
+                    else:
+                        targethp = target['19277']['hp']
+                        if callable(on_monster_alive):
+                            on_monster_alive()
+                else:
+                    targethp = 0
+                    if callable(on_not_monster_alive):
+                        on_not_monster_alive()
+            await asyncio.sleep(POLL_INTERVAL_SEC)
 
 def set_monster_alive_callback(func):
     global on_monster_alive
