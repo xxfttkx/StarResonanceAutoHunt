@@ -12,7 +12,7 @@
 - 支持使用键盘快捷键快速切线
 - 自动发送 `H` 键进行战斗
 
-⚠️ 注意：自动切线依靠[StarResonanceDamageCounter](https://github.com/dmlgzs/StarResonanceDamageCounter)服务。
+⚠️ 注意：自动切线依靠[StarResonanceDamageCounter](https://github.com/dmlgzs/StarResonanceDamageCounter)服务>=v3.2。
 
 ---
 
