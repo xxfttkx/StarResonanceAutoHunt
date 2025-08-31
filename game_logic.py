@@ -80,7 +80,7 @@ def wait_and_press_h(win):
         # 判断是否接近黑色（R/G/B 都低于阈值）
         return all(channel < threshold for channel in rgb)
 
-    timeout = 14  # 最多等待 14 秒
+    timeout = 30  # 最多等待 30 秒
     start_time = time.time()
 
     while True:
@@ -94,12 +94,14 @@ def wait_and_press_h(win):
 
         time.sleep(2)
 
+    time.sleep(0.5)
     log("切线结束，发送战斗按键 H")
-    keyboard.press_and_release('h')
-    time.sleep(0.3)
+    # 最后按H，防止大招动画无法打开界面
     keyboard.press_and_release('esc')
     time.sleep(0.3)
     keyboard.press_and_release('p')
+    time.sleep(0.3)
+    keyboard.press_and_release('h')
 
 def move_cursor(win):
     try:
