@@ -12,39 +12,48 @@ TARGET_UUIDS = {19276: "粉猪", 19277: "风猪"}
 on_monster_alive = None  # 回调函数
 on_not_monster_alive = None  # 回调函数
 on_monster_dead = None  # 回调函数
+TARGET_GROUP = ["飓风哥布林王","铁牙","小猪·闪闪","小猪·/爱","小猪·风","小猪·雷","小猪·火","小猪·水","小猪·土","小猪·木","小猪·光","小猪·暗"]
+TARGET_GROUP = ["小猪·闪闪","小猪·爱","小猪·风"]
 
+def find_enemy(enemies, target_group):
+    for eid, info in enemies.items():
+        for name in target_group:
+            if info.get('name') == name:
+                return eid, info
+    return None
 
 async def listen():
     async with aiohttp.ClientSession() as session:
         targethp = 0
+        lastHP = -1
+        count = 0
         while True:
             async with session.get(ENEMY_URL) as response:
                 if response.status != 200:
                     log(f"GET {ENEMY_URL} -> HTTP {response.status}")
                     return
                 data = await response.json(content_type=None)
-                target = data.get('enemy', {})
-                if '19276' in target.keys():
-                    #丢包
-                    if targethp == target['19276']['hp'] and targethp<1000:
-                        if callable(on_not_monster_alive):
-                            on_not_monster_alive()
+                enimies = data.get('enemy', {})
+                target = find_enemy(enimies, TARGET_GROUP)
+                if target:
+                    target = target[1]
+                log(f"target: {target}")
+                if target and target.get('max_hp', 0)>0:
+                    targethp = target.get('hp', 0)
+                    if lastHP == targethp:
+                        # 丢包
+                        count +=1
+                        if (count > 2 and targethp < 1000) or (count>30):
+                            if callable(on_monster_dead):
+                                on_monster_dead()
                     else:
-                        targethp = target['19276']['hp']
-                        if callable(on_monster_alive):
-                            on_monster_alive()
-                elif '19277' in target.keys():
-                    if targethp == target['19277']['hp'] and targethp<1000:
-                        if callable(on_not_monster_alive):
-                            on_not_monster_alive()
-                    else:
-                        targethp = target['19277']['hp']
+                        count = 0
+                        lastHP = targethp
                         if callable(on_monster_alive):
                             on_monster_alive()
                 else:
-                    targethp = 0
-                    if callable(on_not_monster_alive):
-                        on_not_monster_alive()
+                    if callable(on_monster_dead):
+                        on_monster_dead()
             await asyncio.sleep(POLL_INTERVAL_SEC)
 
 def set_monster_alive_callback(func):
