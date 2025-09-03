@@ -34,20 +34,58 @@ class AutoHuntController:
         self.target_line = 0  # 目标线路编号
         self.offset = offset
 
+    def cal_target_line(self, offset):
+        
+        current_line = game_logic.get_curr_line(self.target_window)
+        lines = [
+            200, 199, 197, 196, 194, 192, 186, 183, 180, 179,
+            173, 172, 169, 165, 160, 158, 157, 150, 149, 148,
+            147, 146, 145, 137, 136, 133, 132, 128, 127, 126,
+            125, 122, 119, 118, 117, 115, 114, 113, 111, 109,
+            101, 100,  99,  96,  95,  93,  91,  90,  89,  88,
+            87,  85,  82,  81,  78,  77,  75,  73,  72,  69,
+            67,  65
+        ]
+
+        def get_next_line(lines, line):
+            if line in lines:
+                idx = lines.index(line)
+                if idx + 1 < len(lines):
+                    return lines[idx + 1]
+                else:
+                    return -1
+            return -1
+        if not lines:
+            log("所有线都存在")
+        else:
+            if self.current_line == current_line:
+                next_line = get_next_line(lines, self.target_line)
+                if next_line != -1:
+                    self.target_line = next_line
+                    return None
+            else:
+                self.current_line = current_line
+                next_line = get_next_line(lines, self.current_line)
+                if next_line != -1:
+                    self.target_line = next_line
+                    return None
+
+        if self.current_line != current_line:
+            self.current_line = current_line
+            self.target_line = current_line + offset
+        else:
+            self.target_line = self.target_line + offset
+        # 线路数越界
+        if self.target_line > 200:
+            self.target_line = 1
+        if self.target_line < 1:
+            self.target_line = 200
+        return self.target_line
+
     def switch_line_and_h(self, offset):
         try:
             log(f"尝试切换线路，偏移量: {offset}")
-            current_line = game_logic.get_curr_line(self.target_window)
-            if self.current_line != current_line:
-                self.current_line = current_line
-                self.target_line = current_line + offset
-            else:
-                self.target_line = self.target_line + offset
-            # 线路数越界
-            if self.target_line > 200:
-                self.target_line = 1
-            if self.target_line < 1:
-                self.target_line = 200
+            self.cal_target_line(offset)
             game_logic.switch_line(self.target_window, self.target_line)
             game_logic.wait_and_press_h(self.target_window)
         except Exception as e:
@@ -59,7 +97,7 @@ class AutoHuntController:
     def _switch_line_job(self):
         self.auto_switch = False
         self.count = 0
-        self.switch_line_and_h(self.offset)  # 切换到上一条线
+        self.switch_line_and_h(self.offset)  # 切换到下一条线
         self.auto_switch = True
         self.count = 0
 
