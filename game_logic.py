@@ -87,10 +87,16 @@ def wait_and_press_h(win):
         color = get_pixel_color(px, py)
         if not is_black(color):
             break
-
+        
         if time.time() - start_time > timeout:
             log("等待超时，强制继续")
             break
+
+        # 点点屏幕中心
+        center_pos = (1920/2,1080/2)  # 示例为屏幕中心，请替换为实际坐标
+        center_pos = get_scale_point(center_pos, *get_window_width_and_height(win))
+        center_pos = point_add_win(center_pos, win)  # 将窗口位置添加到点击位置
+        pyautogui.click(center_pos)
 
         time.sleep(2)
 
