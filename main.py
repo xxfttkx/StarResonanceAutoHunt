@@ -33,10 +33,16 @@ class AutoHuntController:
         self.current_line = 0  # 当前线路编号
         self.target_line = 0  # 目标线路编号
         self.offset = offset
+    
+    def get_curr_line(self):
+        if self.target_line==0:
+            return game_logic.get_curr_line(self.target_window)
+        else:
+            return self.target_line
 
     def cal_target_line(self, offset):
         
-        current_line = game_logic.get_curr_line(self.target_window)
+        current_line = self.get_curr_line()
         lines = []
 
         def get_next_line(lines, line):
@@ -121,6 +127,7 @@ class AutoHuntController:
         os._exit(0)
 
     def changeAutoSwitch(self):
+        self.target_line = 0
         if self.auto_switch_set:
             self.auto_switch_set = False
             self.auto_switch = False

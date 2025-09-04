@@ -65,7 +65,7 @@ def switch_line(win, line):
         log(f"switch_line failed:{e}")
 
 def wait_and_press_h(win):
-    time.sleep(5)
+    time.sleep(10)
     log("等待切线完成（黑屏结束）...")
 
     x1, y1, x2, y2 = get_client_rect(win)
@@ -80,7 +80,7 @@ def wait_and_press_h(win):
         # 判断是否接近黑色（R/G/B 都低于阈值）
         return all(channel < threshold for channel in rgb)
 
-    timeout = 30  # 最多等待 30 秒
+    timeout = 25  # 最多等待 25 秒
     start_time = time.time()
 
     while True:

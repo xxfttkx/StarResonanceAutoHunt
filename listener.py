@@ -43,7 +43,7 @@ async def listen():
                     if lastHP == targethp:
                         # 丢包
                         count +=1
-                        if (count > 2 and targethp < 1000) or (count>30):
+                        if (count > 1 and targethp < 1000) or (count>15):
                             if callable(on_monster_dead):
                                 on_monster_dead()
                     else:
