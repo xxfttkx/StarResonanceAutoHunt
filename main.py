@@ -37,15 +37,7 @@ class AutoHuntController:
     def cal_target_line(self, offset):
         
         current_line = game_logic.get_curr_line(self.target_window)
-        lines = [
-            200, 199, 197, 196, 194, 192, 186, 183, 180, 179,
-            173, 172, 169, 165, 160, 158, 157, 150, 149, 148,
-            147, 146, 145, 137, 136, 133, 132, 128, 127, 126,
-            125, 122, 119, 118, 117, 115, 114, 113, 111, 109,
-            101, 100,  99,  96,  95,  93,  91,  90,  89,  88,
-            87,  85,  82,  81,  78,  77,  75,  73,  72,  69,
-            67,  65
-        ]
+        lines = []
 
         def get_next_line(lines, line):
             if line in lines:
