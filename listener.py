@@ -22,7 +22,7 @@ def find_enemy(enemies, target_group):
                 return eid, info
     return None
 
-async def listen():
+async def listen(enemy_name):
     async with aiohttp.ClientSession() as session:
         targethp = 0
         lastHP = -1
@@ -34,7 +34,9 @@ async def listen():
                     return
                 data = await response.json(content_type=None)
                 enimies = data.get('enemy', {})
-                target = find_enemy(enimies, TARGET_GROUP)
+                target_group = enemy_name and [enemy_name] or TARGET_GROUP
+                # target_group = [enemy_name] if enemy_name else TARGET_GROUP
+                target = find_enemy(enimies, target_group)
                 if target:
                     target = target[1]
                 log(f"target: {target}")

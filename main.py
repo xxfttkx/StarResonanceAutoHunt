@@ -21,6 +21,12 @@ def parse_args():
         default=-1,
         help="自动切线时的偏移量"
     )
+    parser.add_argument(
+        "-n", "--name",
+        type=str,
+        default="",
+        help="hunt enemy name"
+    )
     return parser.parse_args()
 
 class AutoHuntController:
@@ -142,6 +148,7 @@ async def main():
     target_window = find_target_window()
     args = parse_args()
     offset = args.offset
+    enemy_name = args.name
     while target_window is None:
         log("请先启动游戏")
         time.sleep(10)
@@ -165,7 +172,7 @@ async def main():
     keyboard.add_hotkey('.', controller.changeAutoSwitch)
     while True:
         try:
-            await listen()
+            await listen(enemy_name)
         except Exception as e:
             log(f"监听过程中发生错误: {e}")
             time.sleep(10)
