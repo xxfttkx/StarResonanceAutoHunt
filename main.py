@@ -57,7 +57,7 @@ class AutoHuntController:
             104, 102, 101, 98, 97, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 
             84, 83, 81, 79, 77, 76, 75, 73, 71, 70]
         
-        # lines = [50,55,65,73,75,84,93,107,109,110,112,114,121,126,137,141,143,152,155,164]
+        # lines = [50,55,65,73,75,84,93,107,109,110,112,114,121,126,137,141,143,152,164]
 
 
         def get_next_line(lines, line):
@@ -71,7 +71,7 @@ class AutoHuntController:
         if not lines:
             log("所有线都存在")
         else:
-            next_line = get_next_line(lines, self.current_line)
+            next_line = get_next_line(lines, logic_current_line)
             log(f"next_line {next_line}")
             if next_line != -1:
                 self.target_line = next_line
