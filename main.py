@@ -37,7 +37,6 @@ class AutoHuntController:
         self.count = 0
         self.auto_switch_set = False
         self.lock = threading.Lock()  # 真锁
-        self.current_line = 0  # 当前线路编号
         self.target_line = 0  # 目标线路编号
         self.offset = offset
     
@@ -49,7 +48,7 @@ class AutoHuntController:
 
     def cal_target_line(self, offset):
         
-        current_line = self.get_curr_line()
+        logic_current_line = self.get_curr_line()
         lines = [200, 199, 198, 194, 193, 192, 190, 188, 186, 185, 184, 182, 181, 
             177, 176, 175, 174, 173, 171, 169, 168, 167, 165, 164, 163, 160, 
             158, 157, 155, 154, 152, 151, 150, 149, 147, 146, 145, 144, 143, 
@@ -58,7 +57,7 @@ class AutoHuntController:
             104, 102, 101, 98, 97, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 
             84, 83, 81, 79, 77, 76, 75, 73, 71, 70]
         
-        # lines = [44,50,55,65,73,75,84,93,107,109,110,112,114,121,126,134,137,141,143,152,155,157,164]
+        # lines = [50,55,65,73,75,84,93,107,109,110,112,114,121,126,137,141,143,152,155,164]
 
 
         def get_next_line(lines, line):
@@ -72,25 +71,13 @@ class AutoHuntController:
         if not lines:
             log("所有线都存在")
         else:
-            if self.current_line == current_line:
-                next_line = get_next_line(lines, self.target_line)
-                log(f"self.current_line == current_line next_line {next_line}")
-                if next_line != -1:
-                    self.target_line = next_line
-                    return None
-            else:
-                self.current_line = current_line
-                next_line = get_next_line(lines, self.current_line)
-                log(f"self.current_line != current_line next_line {next_line}")
-                if next_line != -1:
-                    self.target_line = next_line
-                    return None
+            next_line = get_next_line(lines, self.current_line)
+            log(f"next_line {next_line}")
+            if next_line != -1:
+                self.target_line = next_line
+                return None
 
-        if self.current_line != current_line:
-            self.current_line = current_line
-            self.target_line = current_line + offset
-        else:
-            self.target_line = self.target_line + offset
+        self.target_line = logic_current_line + offset
         # 线路数越界
         if self.target_line > 200:
             self.target_line = 1
@@ -178,8 +165,8 @@ async def main():
 
     offset = abs(offset)  # 确保偏移量为正数
     # 绑定热键
-    keyboard.add_hotkey('-', lambda: controller.switch_line_and_h(-offset))
-    keyboard.add_hotkey('+', lambda: controller.switch_line_and_h(offset))
+    # keyboard.add_hotkey('-', lambda: controller.switch_line_and_h(-offset))
+    # keyboard.add_hotkey('+', lambda: controller.switch_line_and_h(offset))
     keyboard.add_hotkey('/', controller.exit_program)
     keyboard.add_hotkey('.', controller.changeAutoSwitch)
     while True:
