@@ -76,6 +76,8 @@ def wait_and_press_h(win):
     px = x1 + width // 2
     py = y1 + int(height * 0.90)
 
+    p2 = (x1 + width // 2, y1 + int(height * 0.1))
+
     def is_black(rgb, threshold=30):
         # 判断是否接近黑色（R/G/B 都低于阈值）
         return all(channel < threshold for channel in rgb)
@@ -85,7 +87,9 @@ def wait_and_press_h(win):
 
     while True:
         color = get_pixel_color(px, py)
-        if not is_black(color):
+        color_2 = get_pixel_color(p2[0], p2[1])
+        if not is_black(color) or not is_black(color_2):
+            log("检测到非黑屏，切线完成")
             break
         
         if time.time() - start_time > timeout:

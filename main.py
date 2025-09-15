@@ -24,8 +24,9 @@ def parse_args():
     parser.add_argument(
         "-n", "--name",
         type=str,
-        default="",
-        help="hunt enemy name"
+        nargs="+",          # 接收一个或多个
+        default=[],
+        help="hunt enemy name(s)"
     )
     return parser.parse_args()
 
@@ -49,7 +50,16 @@ class AutoHuntController:
     def cal_target_line(self, offset):
         
         current_line = self.get_curr_line()
-        lines = []
+        lines = [200, 199, 198, 194, 193, 192, 190, 188, 186, 185, 184, 182, 181, 
+            177, 176, 175, 174, 173, 171, 169, 168, 167, 165, 164, 163, 160, 
+            158, 157, 155, 154, 152, 151, 150, 149, 147, 146, 145, 144, 143, 
+            141, 140, 139, 138, 137, 134, 133, 131, 129, 128, 127, 126, 125, 
+            123, 122, 121, 118, 115, 114, 112, 111, 110, 109, 107, 106, 105, 
+            104, 102, 101, 98, 97, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 
+            84, 83, 81, 79, 77, 76, 75, 73, 71, 70]
+        
+        # lines = [44,50,55,65,73,75,84,93,107,109,110,112,114,121,126,134,137,141,143,152,155,157,164]
+
 
         def get_next_line(lines, line):
             if line in lines:
@@ -64,12 +74,14 @@ class AutoHuntController:
         else:
             if self.current_line == current_line:
                 next_line = get_next_line(lines, self.target_line)
+                log(f"self.current_line == current_line next_line {next_line}")
                 if next_line != -1:
                     self.target_line = next_line
                     return None
             else:
                 self.current_line = current_line
                 next_line = get_next_line(lines, self.current_line)
+                log(f"self.current_line != current_line next_line {next_line}")
                 if next_line != -1:
                     self.target_line = next_line
                     return None
@@ -148,7 +160,7 @@ async def main():
     target_window = find_target_window()
     args = parse_args()
     offset = args.offset
-    enemy_name = args.name
+    enemy_names = args.name
     while target_window is None:
         log("请先启动游戏")
         time.sleep(10)
@@ -172,7 +184,7 @@ async def main():
     keyboard.add_hotkey('.', controller.changeAutoSwitch)
     while True:
         try:
-            await listen(enemy_name)
+            await listen(enemy_names)
         except Exception as e:
             log(f"监听过程中发生错误: {e}")
             time.sleep(10)
