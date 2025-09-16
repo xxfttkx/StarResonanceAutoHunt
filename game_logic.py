@@ -31,16 +31,17 @@ def get_curr_line(win):
     else:
         return None
         
-
-
-def switch_line(win, line):
-    """激活窗口并切换线路"""
+def activeate_win(win):
     try:
         if not win.isActive:
             win.activate()
             time.sleep(0.2)  # 稍等窗口激活
     except Exception as e:
         log(f"activate_win failed:{e}")
+
+def switch_line(win, line):
+    """激活窗口并切换线路"""
+    activeate_win(win)
 
     try:
         # # 按下切线快捷键 p
@@ -106,6 +107,7 @@ def wait_and_press_h(win):
 
     time.sleep(0.5)
     log("切线结束，发送战斗按键 H")
+    activeate_win(win)
     # 最后按H，防止大招动画无法打开界面
     keyboard.press_and_release('esc')
     time.sleep(0.3)
