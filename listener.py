@@ -13,7 +13,7 @@ on_monster_alive = None  # 回调函数
 on_not_monster_alive = None  # 回调函数
 on_monster_dead = None  # 回调函数
 TARGET_GROUP = ["火焰食人魔","飓风哥布林王","铁牙","小猪·闪闪","小猪·爱","小猪·风","小猪·雷","小猪·火","小猪·水","小猪·土","小猪·木","小猪·光","小猪·暗"]
-TARGET_GROUP = ["小猪·闪闪","小猪·爱","小猪·风"]
+TARGET_GROUP = ["小猪·闪闪","小猪·爱","小猪·风","娜宝·银辉","娜宝·闪闪"]
 
 def find_enemy(enemies, target_group):
     for eid, info in enemies.items():
