@@ -8,7 +8,7 @@ import sys
 sys.stdout.reconfigure(encoding='utf-8')
 import keyboard
 from utils import *
-from listener import listen, set_monster_alive_callback, set_not_monster_alive_callback, set_monster_dead_callback
+from listener import EnemyListener
 import asyncio
 import threading
 import argparse
@@ -44,6 +44,7 @@ class AutoHuntController:
         self.lock = threading.Lock()  # 真锁
         self.target_line = 0  # 目标线路编号
         self.offset = offset
+        self.target_group = ["小猪·闪闪","娜宝·银辉","娜宝·闪闪","小猪·爱","小猪·风"]
     
     def get_curr_line(self):
         if self.target_line==0:
@@ -62,8 +63,7 @@ class AutoHuntController:
             104, 102, 101, 98, 97, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 
             84, 83, 81, 79, 77, 76, 75, 73, 71, 70]
         
-        lines = [7,11,19,23,25,30,32,39,46,59,68,71,88,92,118,122]
-
+        # lines = [7,19,23,30,32,39,46,68,71,88,92,118,122]
 
         def get_next_line(lines, line):
             if line in lines:
@@ -99,29 +99,12 @@ class AutoHuntController:
         except Exception as e:
             log(f"热键执行失败: {e}")
 
-    def notify_monster_alive(self):
-        self.count = 0
-
     def _switch_line_job(self):
         self.auto_switch = False
         self.count = 0
         self.switch_line_and_h(self.offset)  # 切换到下一条线
         self.auto_switch = True
         self.count = 0
-
-    def notify_not_monster_alive(self):
-        # 尝试获取锁，如果拿不到锁说明有任务在执行，直接跳过
-        if not self.lock.acquire(blocking=False):
-            return
-        try:
-            if self.auto_switch and self.auto_switch_set:
-                self.count += 1
-                over_time = 2
-                if self.count > over_time:
-                    log(f"{over_time}s没发现神奇动物，自动切线")
-                    threading.Thread(target=self._switch_line_job).start()
-        finally:
-            self.lock.release()
     
     def notify_monster_dead(self):
         if not self.lock.acquire(blocking=False):
@@ -163,11 +146,6 @@ async def main():
     if torch.cuda.is_available():
         print("GPU 名称：", torch.cuda.get_device_name(0))
 
-    # 注册事件回调
-    set_monster_alive_callback(controller.notify_monster_alive)
-    set_not_monster_alive_callback(controller.notify_not_monster_alive)
-    set_monster_dead_callback(controller.notify_monster_dead)  # 死亡事件直接切线
-
     offset = abs(offset)  # 确保偏移量为正数
     # 绑定热键
     # keyboard.add_hotkey('-', lambda: controller.switch_line_and_h(-offset))
@@ -176,7 +154,9 @@ async def main():
     keyboard.add_hotkey('.', controller.changeAutoSwitch)
     while True:
         try:
-            await listen(enemy_names)
+            enemy_listener = EnemyListener(enemy_names)
+            enemy_listener.set_monster_dead_callback(controller.notify_monster_dead)
+            await enemy_listener.listen()
         except Exception as e:
             log(f"监听过程中发生错误: {e}")
             time.sleep(10)
