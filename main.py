@@ -44,7 +44,7 @@ class AutoHuntController:
         self.lock = threading.Lock()  # 真锁
         self.target_line = 0  # 目标线路编号
         self.offset = offset
-        self.target_group = ["小猪·闪闪","娜宝·银辉","娜宝·闪闪","小猪·爱","小猪·风"]
+        # self.target_group = ["小猪·闪闪","娜宝·银辉","娜宝·闪闪","小猪·爱","小猪·风"]
     
     def get_curr_line(self):
         if self.target_line==0:
@@ -142,9 +142,9 @@ async def main():
         target_window = find_target_window()
     controller = AutoHuntController(target_window, offset)
     # screenshot_window(target_window)
-    print("CUDA 是否可用：", torch.cuda.is_available())
+    log(f"CUDA 是否可用：{torch.cuda.is_available()}")
     if torch.cuda.is_available():
-        print("GPU 名称：", torch.cuda.get_device_name(0))
+        log(f"GPU 名称：{torch.cuda.get_device_name(0)}")
 
     offset = abs(offset)  # 确保偏移量为正数
     # 绑定热键
@@ -156,6 +156,7 @@ async def main():
         try:
             enemy_listener = EnemyListener(enemy_names)
             enemy_listener.set_monster_dead_callback(controller.notify_monster_dead)
+            log("开始监听...")
             await enemy_listener.listen()
         except Exception as e:
             log(f"监听过程中发生错误: {e}")
