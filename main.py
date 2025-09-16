@@ -22,6 +22,11 @@ def parse_args():
         help="自动切线时的偏移量"
     )
     parser.add_argument(
+        "-w", "--wait",
+        action="store_true",   # 出现时为 True，不出现时为 False
+        help="是否等待"
+    )
+    parser.add_argument(
         "-n", "--name",
         type=str,
         nargs="+",          # 接收一个或多个
@@ -57,7 +62,7 @@ class AutoHuntController:
             104, 102, 101, 98, 97, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 
             84, 83, 81, 79, 77, 76, 75, 73, 71, 70]
         
-        # lines = [15,18,53,56,65,75,89,109,110,152,165,173,192,193,194]
+        lines = [7,11,19,23,25,30,32,39,46,59,68,71,88,92,118,122]
 
 
         def get_next_line(lines, line):

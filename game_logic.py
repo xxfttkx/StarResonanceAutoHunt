@@ -74,10 +74,9 @@ def wait_and_press_h(win):
     height = y2 - y1
 
     # 监测点位置（客户区下方90%高度处中间）
-    px = x1 + width // 2
-    py = y1 + int(height * 0.90)
-
+    p1 = (x1 + width // 2, y1 + int(height * 0.90))
     p2 = (x1 + width // 2, y1 + int(height * 0.1))
+    p3 = (x1 + width // 4, y1 + int(height * 0.05))
 
     def is_black(rgb, threshold=30):
         # 判断是否接近黑色（R/G/B 都低于阈值）
@@ -87,9 +86,10 @@ def wait_and_press_h(win):
     start_time = time.time()
 
     while True:
-        color = get_pixel_color(px, py)
+        color_1 = get_pixel_color(p1[0], p1[1])
         color_2 = get_pixel_color(p2[0], p2[1])
-        if not is_black(color) or not is_black(color_2):
+        color_3 = get_pixel_color(p3[0], p3[1])
+        if not is_black(color_1) or not is_black(color_2)  or not is_black(color_3):
             log("检测到非黑屏，切线完成")
             break
         

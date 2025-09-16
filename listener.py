@@ -13,7 +13,8 @@ on_monster_alive = None  # 回调函数
 on_not_monster_alive = None  # 回调函数
 on_monster_dead = None  # 回调函数
 TARGET_GROUP = ["火焰食人魔","飓风哥布林王","铁牙","小猪·闪闪","小猪·爱","小猪·风","小猪·雷","小猪·火","小猪·水","小猪·土","小猪·木","小猪·光","小猪·暗"]
-TARGET_GROUP = ["小猪·闪闪","小猪·爱","小猪·风","娜宝·银辉","娜宝·闪闪"]
+TARGET_GROUP = ["小猪·闪闪","娜宝·银辉","娜宝·闪闪"]
+# TARGET_GROUP = ["小猪·爱","小猪·风"]
 
 def find_enemy(enemies, target_group):
     for eid, info in enemies.items():
@@ -39,7 +40,7 @@ async def listen(enemy_names):
                 target = find_enemy(enimies, target_group)
                 if target:
                     target = target[1]
-                log(f"target: {target}")
+                    log(f"target: {target}")
                 if target and target.get('max_hp', 0)>0:
                     targethp = target.get('hp', -1)
                     if targethp == 0:
