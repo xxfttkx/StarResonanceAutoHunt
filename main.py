@@ -33,16 +33,25 @@ def parse_args():
         default=[],
         help="hunt enemy name(s)"
     )
+    parser.add_argument(
+        "-l", "--lines",
+        type=int,
+        nargs="+",   # 接收多个整数
+        default=[],
+        help="要处理的行号列表"
+    )
     return parser.parse_args()
 
 class AutoHuntController:
-    def __init__(self, target_window, offset=-1):
+    def __init__(self, target_window, offset=-1, lines = None):
         self.target_window = target_window
         self.auto_switch = False
         self.auto_switch_set = False
         self.lock = threading.Lock()  # 真锁
         self.target_line = 0  # 目标线路编号
         self.offset = offset
+        if lines :
+            self.lines = lines
         # self.target_group = ["小猪·闪闪","娜宝·银辉","娜宝·闪闪","小猪·爱","小猪·风"]
     
     def get_curr_line(self):
@@ -63,7 +72,8 @@ class AutoHuntController:
             84, 83, 81, 79, 77, 76, 75, 73, 71, 70]
         
         # lines = [7,19,23,30,32,39,46,68,71,88,92,118,122]
-
+        if self.lines:
+            lines = self.lines
         def get_next_line(lines, line):
             if line in lines:
                 idx = lines.index(line)
@@ -136,7 +146,7 @@ async def main():
         log("请先启动游戏")
         time.sleep(10)
         target_window = find_target_window()
-    controller = AutoHuntController(target_window, offset)
+    controller = AutoHuntController(target_window, offset, args.lines)
     # screenshot_window(target_window)
     log(f"CUDA 是否可用：{torch.cuda.is_available()}")
     if torch.cuda.is_available():
