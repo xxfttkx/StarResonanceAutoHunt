@@ -39,7 +39,9 @@ class EnemyListener:
                     target = find_enemy(enimies, self.target_group)
                     if target:
                         target = target[1]
-                        log(f"target: {target}")
+                        targethp = target.get('hp', -1)
+                        if lastHP != targethp:
+                            log(f"target: {target}")
                     if target and target.get('max_hp', 0)>0:
                         targethp = target.get('hp', -1)
                         if targethp == 0:
