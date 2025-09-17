@@ -39,7 +39,6 @@ class AutoHuntController:
     def __init__(self, target_window, offset=-1):
         self.target_window = target_window
         self.auto_switch = False
-        self.count = 0
         self.auto_switch_set = False
         self.lock = threading.Lock()  # 真锁
         self.target_line = 0  # 目标线路编号
@@ -101,10 +100,8 @@ class AutoHuntController:
 
     def _switch_line_job(self):
         self.auto_switch = False
-        self.count = 0
         self.switch_line_and_h(self.offset)  # 切换到下一条线
         self.auto_switch = True
-        self.count = 0
     
     def notify_monster_dead(self):
         if not self.lock.acquire(blocking=False):
@@ -124,7 +121,6 @@ class AutoHuntController:
         if self.auto_switch_set:
             self.auto_switch_set = False
             self.auto_switch = False
-            self.count = 0
             log("自动切线已关闭")
         else:
             self.auto_switch_set = True
@@ -165,6 +161,3 @@ async def main():
 if __name__ == '__main__':
     sys.stdout.reconfigure(encoding='utf-8')
     asyncio.run(main())
-    
-        
-    
