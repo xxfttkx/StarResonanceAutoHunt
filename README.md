@@ -80,6 +80,10 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 python main.py
 ```
 
+```
+python main.py -o -1 -n 圣域飞鱼 蜥蜴人王 小猪·闪闪 雷电食人魔 -l 200 185 177 175 167 165 163 160 158 155 149 147 141 140 133 126 123 122 112 109 105 102 98 92 90 88 86 75 73 71 70 67 65 50 46 39 38 32 26 25
+```
+
 运行后监听按键操作，按照快捷键说明进行控制。
 
 ---
