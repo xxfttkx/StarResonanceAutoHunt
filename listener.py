@@ -40,7 +40,7 @@ class EnemyListener:
                     if target:
                         target = target[1]
                         targethp = target.get('hp', -1)
-                        if lastHP != targethp:
+                        if lastHP != targethp or targethp==target.get('max_hp', 0):
                             log(f"target: {target}")
                     if target and target.get('max_hp', 0)>0:
                         targethp = target.get('hp', -1)
