@@ -50,8 +50,8 @@ class AutoHuntController:
         self.lock = threading.Lock()  # 真锁
         self.target_line = 0  # 目标线路编号
         self.offset = offset
-        if lines :
-            self.lines = lines
+        self.lines = lines
+            
         # self.target_group = ["小猪·闪闪","娜宝·银辉","娜宝·闪闪","小猪·爱","小猪·风"]
     
     def get_curr_line(self):
