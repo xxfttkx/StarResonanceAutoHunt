@@ -5,15 +5,23 @@ import time
 import easyocr
 import re
 from PIL import Image
-    
-def get_curr_line(win):
-    # 获取客户区屏幕坐标
+
+def ensure_window_active(win):
+    """确保目标窗口处于激活状态"""
     try:
         if not win.isActive:
+            pyautogui.press("alt")
             win.activate()
-            time.sleep(0.2)  # 稍等窗口激活
+            time.sleep(0.2)
+        return True
     except Exception as e:
         log(f"activate_win failed:{e}")
+    return False
+
+def get_curr_line(win):
+    # 获取客户区屏幕坐标
+    if not ensure_window_active(win):
+        return None
     # 手动设定线路显示区域的 ROI（相对于客户区）
     rect = (1479,97,1554,127)
     line = None
