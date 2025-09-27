@@ -8,7 +8,12 @@ from PIL import Image
     
 def get_curr_line(win):
     # 获取客户区屏幕坐标
-
+    try:
+        if not win.isActive:
+            win.activate()
+            time.sleep(0.2)  # 稍等窗口激活
+    except Exception as e:
+        log(f"activate_win failed:{e}")
     # 手动设定线路显示区域的 ROI（相对于客户区）
     rect = (1479,97,1554,127)
     line = None
@@ -114,13 +119,3 @@ def wait_and_press_h(win):
     keyboard.press_and_release('p')
     time.sleep(0.3)
     keyboard.press_and_release('h')
-
-def move_cursor(win):
-    try:
-        if not win.isActive:
-            win.activate()
-            time.sleep(0.2)  # 稍等窗口激活
-    except Exception as e:
-        log(f"activate_win failed:{e}")
-    # 每次右移 2 像素，移动 50 次
-    move_mouse()

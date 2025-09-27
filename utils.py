@@ -200,31 +200,10 @@ def ltrb_to_num(rect):
         image = Image.fromarray(np_image)
         save_screenshot(image)  # 保存截图以便调试
 
-# Windows API SendInput 模拟鼠标移动
-SendInput = ctypes.windll.user32.SendInput
-
-class MOUSEINPUT(ctypes.Structure):
-    _fields_ = [("dx", ctypes.c_long),
-                ("dy", ctypes.c_long),
-                ("mouseData", ctypes.c_ulong),
-                ("dwFlags", ctypes.c_ulong),
-                ("time", ctypes.c_ulong),
-                ("dwExtraInfo", ctypes.POINTER(ctypes.c_ulong))]
-
-class INPUT(ctypes.Structure):
-    _fields_ = [("type", ctypes.c_ulong),
-                ("mi", MOUSEINPUT)]
-
-def move_mouse_relative(x, y):
-    mi = MOUSEINPUT(x, y, 0, 0x0001, 0, None)  # MOUSEEVENTF_MOVE = 0x0001
-    inp = INPUT(0, mi)
-    SendInput(1, ctypes.byref(inp), ctypes.sizeof(inp))
-
-def move_mouse():
-    move_mouse_relative(0,200)
-    delay = 0.01
-    all = 3000
-    second = 3
-    for _ in range(int(second/delay)):
-        move_mouse_relative(int(delay*all/second), 0)  # 每次移动 2
-        time.sleep(delay)
+def strToList(s):
+    """将-分隔的字符串转换为整数列表"""
+    try:
+        return [int(item.strip()) for item in s.split('-') if item.strip().isdigit()]
+    except Exception as e:
+        log(f"字符串转换为列表失败: {e}")
+        return []
