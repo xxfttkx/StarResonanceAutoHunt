@@ -200,10 +200,19 @@ def ltrb_to_num(rect):
         image = Image.fromarray(np_image)
         save_screenshot(image)  # 保存截图以便调试
 
-def strToList(s):
-    """将-分隔的字符串转换为整数列表"""
+def str_to_list(s: str):
+    """
+    将字符串按空格、逗号、横杠分隔后转换为整数列表。
+    例如：
+    "12 23 56-78" -> [12, 23, 56, 78]
+    """
+    result = []
     try:
-        return [int(item.strip()) for item in s.split('-') if item.strip().isdigit()]
+        # 用正则把空格/逗号/- 都当作分隔符
+        tokens = re.split(r"[,\s\-]+", s.strip())
+        for token in tokens:
+            if token.isdigit():
+                result.append(int(token))
     except Exception as e:
         log(f"字符串转换为列表失败: {e}")
-        return []
+    return result

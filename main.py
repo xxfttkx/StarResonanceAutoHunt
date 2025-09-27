@@ -35,10 +35,9 @@ def parse_args():
     )
     parser.add_argument(
         "-l", "--lines",
-        type=int,
-        nargs="+",   # 接收多个整数
+        type=str_to_list,
         default=[],
-        help="要处理的行号列表"
+        help="要处理的行号列表，如 '12 23 56-78'"
     )
     return parser.parse_args()
 
