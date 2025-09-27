@@ -113,10 +113,10 @@ class AutoHuntController:
         if not self.lock.acquire(blocking=False):
             return
         try:
-            if self.delay and self.delay > 0:
-                log(f"等待 {self.delay} 秒后切线")
-                time.sleep(self.delay)
             if self.auto_switch and self.auto_switch_set:
+                if self.delay and self.delay > 0:
+                    log(f"等待 {self.delay} 秒后切线")
+                    time.sleep(self.delay)
                 threading.Thread(target=self._switch_line_job).start()
         finally:
             self.lock.release()
