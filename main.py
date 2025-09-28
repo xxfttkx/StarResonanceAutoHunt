@@ -50,9 +50,12 @@ class AutoHuntController:
         self.target_line = 0  # 目标线路编号
         self.offset = offset
         self.lines = lines
+        if not self.lines:
+            self.lines = offset < 0 and list(range(200, 0, -1)) or list(range(1, 201))
         self.delay = 1
         # self.target_group = ["小猪·闪闪","娜宝·银辉","娜宝·闪闪"]
         self.target_group = enemy_names if enemy_names else ["小猪·爱","小猪·风"]
+        self.enemy_listener = None
     
     def get_curr_line(self):
         if self.target_line==0:
@@ -61,13 +64,8 @@ class AutoHuntController:
             return self.target_line
 
     def cal_target_line(self, offset):
-        
         logic_current_line = self.get_curr_line()
-        
-        # lines = [7,19,23,30,32,39,46,68,71,88,92,118,122]
-        lines = []
-        if self.lines:
-            lines = self.lines
+        lines = self.lines
         def get_next_line(lines, line):
             if line in lines:
                 idx = lines.index(line)
@@ -76,15 +74,11 @@ class AutoHuntController:
                 else:
                     return -1
             return -1
-        if not lines:
-            log("所有线都存在")
-        else:
-            next_line = get_next_line(lines, logic_current_line)
-            log(f"next_line {next_line}")
-            if next_line != -1:
-                self.target_line = next_line
-                return None
-
+        next_line = get_next_line(lines, logic_current_line)
+        log(f"next_line {next_line}")
+        if next_line != -1:
+            self.target_line = next_line
+            return None
         self.target_line = logic_current_line + offset
         # 线路数越界
         if self.target_line > 200:
@@ -133,6 +127,9 @@ class AutoHuntController:
             self.auto_switch_set = True
             self.auto_switch = True
             log("自动切线已开启")
+        
+    async def startAutoHunt():
+        pass
 
 async def main():
     target_window = find_target_window()
@@ -146,7 +143,7 @@ async def main():
         target_window = find_target_window()
     controller = AutoHuntController(target_window, offset, enemy_names, args.lines)
     log(f"监听的怪物名称: {controller.target_group}")
-    log(f"监听的线路: {lines}")
+    log(f"监听的线路: {controller.lines}")
     # screenshot_window(target_window)
     log(f"CUDA 是否可用：{torch.cuda.is_available()}")
     if torch.cuda.is_available():
