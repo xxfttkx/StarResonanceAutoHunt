@@ -140,13 +140,13 @@ async def main():
     offset = args.offset
     enemy_names = args.name
     lines = args.lines
-    log(f"监听的怪物名称: {enemy_names}")
-    log(f"监听的线路: {lines}")
     while target_window is None:
         log("请先启动游戏")
         time.sleep(10)
         target_window = find_target_window()
     controller = AutoHuntController(target_window, offset, enemy_names, args.lines)
+    log(f"监听的怪物名称: {controller.target_group}")
+    log(f"监听的线路: {lines}")
     # screenshot_window(target_window)
     log(f"CUDA 是否可用：{torch.cuda.is_available()}")
     if torch.cuda.is_available():
