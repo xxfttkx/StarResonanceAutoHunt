@@ -127,6 +127,9 @@ class AutoHuntController:
             self.auto_switch_set = True
             self.auto_switch = True
             log("自动切线已开启")
+    
+    def set_enemy_target(self, enemy_names):
+        self.target_group = enemy_names
         
     async def startAutoHunt():
         pass
@@ -141,7 +144,7 @@ async def main():
         log("请先启动游戏")
         time.sleep(10)
         target_window = find_target_window()
-    controller = AutoHuntController(target_window, offset, enemy_names, args.lines)
+    controller = AutoHuntController(target_window, offset, enemy_names, lines)
     log(f"监听的怪物名称: {controller.target_group}")
     log(f"监听的线路: {controller.lines}")
     # screenshot_window(target_window)
