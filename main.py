@@ -42,7 +42,7 @@ def parse_args():
     return parser.parse_args()
 
 class AutoHuntController:
-    def __init__(self, target_window, offset=-1, lines = None):
+    def __init__(self, target_window, offset=-1, enemy_names = [], lines = None):
         self.target_window = target_window
         self.auto_switch = False
         self.auto_switch_set = False
@@ -51,9 +51,8 @@ class AutoHuntController:
         self.offset = offset
         self.lines = lines
         self.delay = 1
-            
         # self.target_group = ["小猪·闪闪","娜宝·银辉","娜宝·闪闪"]
-        # self.target_group = ["小猪·爱","小猪·风"]
+        self.target_group = enemy_names if enemy_names else ["小猪·爱","小猪·风"]
     
     def get_curr_line(self):
         if self.target_line==0:
@@ -147,7 +146,7 @@ async def main():
         log("请先启动游戏")
         time.sleep(10)
         target_window = find_target_window()
-    controller = AutoHuntController(target_window, offset, args.lines)
+    controller = AutoHuntController(target_window, offset, enemy_names, args.lines)
     # screenshot_window(target_window)
     log(f"CUDA 是否可用：{torch.cuda.is_available()}")
     if torch.cuda.is_available():
@@ -161,7 +160,7 @@ async def main():
     keyboard.add_hotkey('.', controller.changeAutoSwitch)
     while True:
         try:
-            enemy_listener = EnemyListener(enemy_names)
+            enemy_listener = EnemyListener(controller.target_group)
             enemy_listener.set_monster_dead_callback(controller.notify_monster_dead)
             log("开始监听...")
             await enemy_listener.listen()
