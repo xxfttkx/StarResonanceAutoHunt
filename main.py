@@ -158,10 +158,10 @@ async def main():
     # keyboard.add_hotkey('+', lambda: controller.switch_line_and_h(offset))
     keyboard.add_hotkey('/', controller.exit_program)
     keyboard.add_hotkey('.', controller.changeAutoSwitch)
+    enemy_listener = EnemyListener(controller.target_group)
+    enemy_listener.set_monster_dead_callback(controller.notify_monster_dead)
     while True:
         try:
-            enemy_listener = EnemyListener(controller.target_group)
-            enemy_listener.set_monster_dead_callback(controller.notify_monster_dead)
             log("开始监听...")
             await enemy_listener.listen()
         except Exception as e:
