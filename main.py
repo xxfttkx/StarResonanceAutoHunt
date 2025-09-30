@@ -155,50 +155,17 @@ class AutoHuntController:
             log(f"GPU 名称：{torch.cuda.get_device_name(0)}")
         keyboard.add_hotkey('/', self.exit_program)
         keyboard.add_hotkey('.', self.changeAutoSwitch)
-        enemy_listener = EnemyListener(self.target_group)
-        enemy_listener.set_monster_dead_callback(self.notify_monster_dead)
+        self.enemy_listener = EnemyListener(self.target_group)
+        self.enemy_listener.set_monster_dead_callback(self.notify_monster_dead)
         while True:
             try:
                 log("开始监听...")
-                await enemy_listener.listen()
+                await self.enemy_listener.listen()
             except Exception as e:
                 log(f"监听过程中发生错误: {e}")
                 time.sleep(10)
 
-async def main():
-    target_window = find_target_window()
-    args = parse_args()
-    offset = args.offset
-    enemy_names = args.name
-    lines = args.lines
-    while target_window is None:
-        log("请先启动游戏")
-        time.sleep(10)
-        target_window = find_target_window()
-    controller = AutoHuntController(target_window, offset, enemy_names, lines)
-    log(f"监听的怪物名称: {controller.target_group}")
-    log(f"监听的线路: {controller.lines}")
-    # screenshot_window(target_window)
-    log(f"CUDA 是否可用：{torch.cuda.is_available()}")
-    if torch.cuda.is_available():
-        log(f"GPU 名称：{torch.cuda.get_device_name(0)}")
-
-    offset = abs(offset)  # 确保偏移量为正数
-    # 绑定热键
-    # keyboard.add_hotkey('-', lambda: controller.switch_line_and_h(-offset))
-    # keyboard.add_hotkey('+', lambda: controller.switch_line_and_h(offset))
-    keyboard.add_hotkey('/', controller.exit_program)
-    keyboard.add_hotkey('.', controller.changeAutoSwitch)
-    enemy_listener = EnemyListener(controller.target_group)
-    enemy_listener.set_monster_dead_callback(controller.notify_monster_dead)
-    while True:
-        try:
-            log("开始监听...")
-            await enemy_listener.listen()
-        except Exception as e:
-            log(f"监听过程中发生错误: {e}")
-            time.sleep(10)
-            
 if __name__ == '__main__':
     sys.stdout.reconfigure(encoding='utf-8')
-    asyncio.run(main())
+    controller = AutoHuntController(None, 0, [], [])
+    asyncio.run(controller.startAutoHunt())
