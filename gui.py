@@ -42,7 +42,10 @@ def start_gui():
     ).pack(anchor="w", pady=10)
 
     enemy_names = ["小猪·闪闪", "娜宝·银辉", "娜宝·闪闪", "小猪·爱", "小猪·风"]
-
+    def on_enemy_toggle(name, var):
+        state = "选中" if var.get() else "取消"
+        log(f"{name} 被{state}")
+        controller.set_enemy_target(name, state=="选中")
     check_vars = []
     for name in enemy_names:
         var = tk.BooleanVar()
@@ -51,7 +54,8 @@ def start_gui():
             text=name,
             variable=var,
             font=("Microsoft YaHei", 14),
-            bg="#f0f4f7"
+            bg="#f0f4f7",
+            command=lambda n=name, v=var: on_enemy_toggle(n, v)  # 👈 加回调
         )
         chk.pack(anchor="w", pady=5)
         check_vars.append(var)
