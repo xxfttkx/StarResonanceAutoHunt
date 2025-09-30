@@ -20,7 +20,11 @@ class EnemyListener:
         self.on_monster_dead = None
         self.enemy_url = "http://localhost:8989/api/enemies"
         self.poll_interval_sec = 1
-        
+    
+    def set_target_group(self, target_group):
+        self.target_group = target_group
+        log(f"设置监听目标: {self.target_group}")
+
     def set_monster_dead_callback(self, func):
         self.on_monster_dead = func
 
