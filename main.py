@@ -42,11 +42,15 @@ def parse_args():
     return parser.parse_args()
 
 class AutoHuntController:
-    def __init__(self, target_window = None, offset=-1, enemy_names = [], lines = None):
-        if target_window :
-            self.init(target_window, offset, enemy_names, lines)
-    
-    def init(self,target_window,offset,enemy_names,lines):
+    def __init__(self):
+        self.init()
+
+    def init(self):
+        target_window = find_target_window()
+        args = parse_args()
+        self.initialize(target_window,args.offset,args.name,args.lines)
+
+    def initialize(self,target_window,offset,enemy_names,lines):
         self.target_window = target_window
         self.auto_switch = False
         self.auto_switch_set = False
@@ -145,9 +149,6 @@ class AutoHuntController:
         log(f"设置监听线路为: {self.lines}")
         
     async def startAutoHunt(self):
-        target_window = find_target_window()
-        args = parse_args()
-        self.init(target_window,args.offset,args.name,args.lines)
         log(f"监听的怪物名称: {self.target_group}")
         log(f"监听的线路: {self.lines}")
         # screenshot_window(target_window)
@@ -168,5 +169,5 @@ class AutoHuntController:
 
 if __name__ == '__main__':
     sys.stdout.reconfigure(encoding='utf-8')
-    controller = AutoHuntController(None, 0, [], [])
+    controller = AutoHuntController()
     asyncio.run(controller.startAutoHunt())

@@ -22,7 +22,7 @@ def start_asyncio_loop(controller):
 
 
 def start_gui():
-    controller = AutoHuntController(None, 0, [], [])
+    controller = AutoHuntController()
     root = tk.Tk()
     root.title("AutoHunt GUI")
     root.geometry("1920x1080")
