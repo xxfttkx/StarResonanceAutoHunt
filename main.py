@@ -42,7 +42,11 @@ def parse_args():
     return parser.parse_args()
 
 class AutoHuntController:
-    def __init__(self, target_window, offset=-1, enemy_names = [], lines = None):
+    def __init__(self, target_window = None, offset=-1, enemy_names = [], lines = None):
+        if target_window :
+            self.init(target_window, offset, enemy_names, lines)
+    
+    def init(self,target_window,offset,enemy_names,lines):
         self.target_window = target_window
         self.auto_switch = False
         self.auto_switch_set = False
@@ -56,7 +60,7 @@ class AutoHuntController:
         # self.target_group = ["小猪·闪闪","娜宝·银辉","娜宝·闪闪"]
         self.target_group = enemy_names if enemy_names else ["小猪·爱","小猪·风"]
         self.enemy_listener = None
-    
+
     def get_curr_line(self):
         if self.target_line==0:
             return game_logic.get_curr_line(self.target_window)
@@ -131,8 +135,27 @@ class AutoHuntController:
     def set_enemy_target(self, enemy_names):
         self.target_group = enemy_names
         
-    async def startAutoHunt():
-        pass
+    async def startAutoHunt(self):
+        target_window = find_target_window()
+        args = parse_args()
+        self.init(target_window,args.offset,args.name,args.lines)
+        log(f"监听的怪物名称: {self.target_group}")
+        log(f"监听的线路: {self.lines}")
+        # screenshot_window(target_window)
+        log(f"CUDA 是否可用：{torch.cuda.is_available()}")
+        if torch.cuda.is_available():
+            log(f"GPU 名称：{torch.cuda.get_device_name(0)}")
+        keyboard.add_hotkey('/', self.exit_program)
+        keyboard.add_hotkey('.', self.changeAutoSwitch)
+        enemy_listener = EnemyListener(self.target_group)
+        enemy_listener.set_monster_dead_callback(self.notify_monster_dead)
+        while True:
+            try:
+                log("开始监听...")
+                await enemy_listener.listen()
+            except Exception as e:
+                log(f"监听过程中发生错误: {e}")
+                time.sleep(10)
 
 async def main():
     target_window = find_target_window()

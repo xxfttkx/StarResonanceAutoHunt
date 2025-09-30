@@ -1,16 +1,19 @@
+import sys
 import threading
 import asyncio
 import tkinter as tk
 from tkinter import scrolledtext
 
-from main import main  # 导入你的 main 函数
+from main import AutoHuntController, main
+from text_redirector import TextRedirector  # 导入你的 main 函数
 
 
-def start_asyncio_loop():
-    asyncio.run(main())   # 调用你原来的 main()
+def start_asyncio_loop(controller):
+    asyncio.run(controller.startAutoHunt())
 
 
 def start_gui():
+    controller = AutoHuntController(None, 0, [], [])
     root = tk.Tk()
     root.title("AutoHunt GUI")
     root.geometry("1920x1080")
@@ -77,6 +80,12 @@ def start_gui():
     )
     log_area.pack(fill="both", expand=True)
 
+    # 重定向 stdout / stderr
+    sys.stdout = TextRedirector(log_area, "stdout")
+    sys.stderr = TextRedirector(log_area, "stderr")
+    log_area.tag_configure("stderr", foreground="red")
+    log_area.tag_configure("stdout", foreground="white")
+
     # ================= 底部按钮 =================
     bottom_frame = tk.Frame(root, bg="#f0f4f7")
     bottom_frame.grid(row=1, column=0, columnspan=2, pady=20)
@@ -90,7 +99,11 @@ def start_gui():
         bg="#4CAF50",
         fg="white",
         relief="flat",
-        command=lambda: threading.Thread(target=start_asyncio_loop, daemon=True).start()
+        command=lambda: threading.Thread(
+            target=start_asyncio_loop, 
+            args=(controller,), 
+            daemon=True
+        ).start()
     )
     start_btn.pack(side="left", padx=20)
 
