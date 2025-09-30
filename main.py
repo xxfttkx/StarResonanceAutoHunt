@@ -134,6 +134,10 @@ class AutoHuntController:
     
     def set_enemy_target(self, enemy_names):
         self.target_group = enemy_names
+    
+    def set_lines(self, lines):
+        self.lines = str_to_list(lines)
+        log(f"设置监听线路为: {self.lines}")
         
     async def startAutoHunt(self):
         target_window = find_target_window()

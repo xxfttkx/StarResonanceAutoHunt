@@ -4,12 +4,21 @@ import asyncio
 import tkinter as tk
 from tkinter import scrolledtext
 
-from main import AutoHuntController, main
+from utils import log, log_error
+from main import AutoHuntController
 from text_redirector import TextRedirector  # 导入你的 main 函数
 
 
+
+first = False
 def start_asyncio_loop(controller):
-    asyncio.run(controller.startAutoHunt())
+    global first
+    if not first:
+        first = True
+        log("启动异步事件循环...")
+        asyncio.run(controller.startAutoHunt())
+    else:
+        log_error("程序已在运行中，请勿重复点击启动按钮。")
 
 
 def start_gui():
@@ -55,8 +64,14 @@ def start_gui():
         bg="#f0f4f7"
     ).pack(anchor="w", pady=15)
 
+    def on_lines_enter(event):
+        text = lines_entry.get("1.0", "end-1c").strip()
+        log("最终输入: " + text)
+        controller.set_lines(text)
+
     lines_entry = tk.Text(left_frame, height=6, width=40, font=("Consolas", 12))
     lines_entry.pack(pady=5)
+    lines_entry.bind("<Return>", on_lines_enter)
 
     # ================= 右边日志区域 =================
     right_frame = tk.Frame(root, bg="#ffffff")

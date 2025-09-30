@@ -1,6 +1,7 @@
 from datetime import datetime
 import os
 import re
+import sys
 import time
 from PIL import Image
 import cv2
@@ -17,6 +18,10 @@ def log(msg):
     """带时间前缀的打印函数"""
     now = datetime.now().strftime("[%H:%M:%S]")
     print(f"{now} {msg}")
+
+def log_error(msg):
+    now = datetime.now().strftime("[%H:%M:%S]")
+    print(f"{now} {msg}", file=sys.stderr)
 
 def move_window_to_top_left(win):
     hwnd = win._hWnd  # 获取窗口句柄
