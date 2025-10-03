@@ -8,8 +8,6 @@ from utils import log, log_error
 from main import AutoHuntController
 from text_redirector import TextRedirector  # 导入你的 main 函数
 
-
-
 first = False
 def start_asyncio_loop(controller):
     global first
@@ -19,7 +17,6 @@ def start_asyncio_loop(controller):
         asyncio.run(controller.startAutoHunt())
     else:
         log_error("程序已在运行中，请勿重复点击启动按钮。")
-
 
 def start_gui():
     controller = AutoHuntController(None, 0, [], [])
