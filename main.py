@@ -141,8 +141,12 @@ class AutoHuntController:
             self.target_group.append(name)
         if not selected and name in self.target_group:
             self.target_group.remove(name)
-        log(f"当前监听的怪物: {self.target_group}")
         self.enemy_listener.set_target_group(self.target_group)
+    
+    def set_enemy_group(self, enemy_names):
+        self.target_group = enemy_names
+        self.enemy_listener.set_target_group(self.target_group)
+            
     
     def set_lines(self, lines):
         self.lines = str_to_list(lines)

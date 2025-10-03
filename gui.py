@@ -58,6 +58,38 @@ def start_gui():
         chk.pack(anchor="w", pady=5)
         check_vars.append(var)
 
+    # 自定义敌人
+    
+    def add_enemy(name):
+        """动态添加一个敌人 Checkbutton"""
+        var = tk.BooleanVar(value=False)
+        chk = tk.Checkbutton(
+            left_frame,
+            text=name,
+            variable=var,
+            font=("Microsoft YaHei", 14),
+            bg="#f0f4f7",
+            command=lambda n=name, v=var: on_enemy_toggle(n, v)
+        )
+        chk.pack(anchor="w", pady=5)
+        check_vars.append(var)
+    
+    tk.Label(
+        left_frame,
+        text="自定义敌人列表 (一行一个名字)",
+        font=("Microsoft YaHei", 14, "bold"),
+        bg="#f0f4f7"
+    ).pack(anchor="w", pady=15)
+
+    def on_enemy_list_enter(event):
+        text = enemy_entry.get("1.0", "end-1c").strip()
+        names = [line.strip() for line in text.splitlines() if line.strip()]
+        controller.set_enemy_group(names)  # 直接替换列表
+
+    enemy_entry = tk.Text(left_frame, height=6, width=40, font=("Consolas", 12))
+    enemy_entry.pack(pady=5)
+    enemy_entry.bind("<Return>", on_enemy_list_enter)
+
     # 输入 lines 的地方
     tk.Label(
         left_frame,
