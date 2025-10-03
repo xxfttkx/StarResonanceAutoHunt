@@ -19,7 +19,8 @@ def start_asyncio_loop(controller):
         log_error("程序已在运行中，请勿重复点击启动按钮。")
 
 def start_gui():
-    controller = AutoHuntController(None, 0, [], [])
+    controller = AutoHuntController()
+    controller.init()
     root = tk.Tk()
     root.title("AutoHunt GUI")
     root.geometry("1920x1080")
@@ -45,7 +46,7 @@ def start_gui():
         controller.set_enemy_target(name, state=="选中")
     check_vars = []
     for name in enemy_names:
-        var = tk.BooleanVar()
+        var = tk.BooleanVar(value = name in controller.target_group)
         chk = tk.Checkbutton(
             left_frame,
             text=name,
