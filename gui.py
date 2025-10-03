@@ -98,7 +98,7 @@ def start_gui():
         bg="#f0f4f7"
     ).pack(anchor="w", pady=15)
 
-    def on_lines_enter(event):
+    def on_lines_enter(event=None):
         text = lines_entry.get("1.0", "end-1c").strip()
         log("最终输入: " + text)
         controller.set_lines(text)
@@ -106,6 +106,23 @@ def start_gui():
     lines_entry = tk.Text(left_frame, height=6, width=40, font=("Consolas", 12))
     lines_entry.pack(pady=5)
     lines_entry.bind("<Return>", on_lines_enter)
+
+    # 👇 增加顺序/逆序按钮
+    def fill_lines(order="asc"):
+        if order == "asc":
+            nums = list(range(1, 201))  # 1 ~ 200
+        else:
+            nums = list(range(200, 0, -1))  # 200 ~ 1
+        text = ", ".join(map(str, nums))
+        lines_entry.delete("1.0", "end")
+        lines_entry.insert("1.0", text)
+        on_lines_enter()  # 同时更新到 controller
+
+    btn_frame = tk.Frame(left_frame, bg="#f0f4f7")
+    btn_frame.pack(pady=5)
+
+    tk.Button(btn_frame, text="顺序填充 1~200", command=lambda: fill_lines("asc")).pack(side="left", padx=5)
+    tk.Button(btn_frame, text="逆序填充 200~1", command=lambda: fill_lines("desc")).pack(side="left", padx=5)
 
     # ================= 右边日志区域 =================
     right_frame = tk.Frame(root, bg="#ffffff")
