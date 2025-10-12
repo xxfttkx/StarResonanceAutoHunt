@@ -2,9 +2,6 @@ import keyboard
 from utils import *
 import pyautogui
 import time
-import easyocr
-import re
-from PIL import Image
 
 def ensure_window_active(win):
     """确保目标窗口处于激活状态"""
@@ -57,10 +54,6 @@ def switch_line(win, line):
     activeate_win(win)
 
     try:
-        # # 按下切线快捷键 p
-        # pyautogui.press('p')
-        # time.sleep(0.5)  # 等待切线面板弹出
-        
         # 点击线路输入框（根据实际位置修改）
         input_box_pos = (1492,1007)  # 示例为屏幕中心，请替换为实际坐标
         input_box_pos = get_scale_point(input_box_pos, *get_window_width_and_height(win))
@@ -109,12 +102,6 @@ def wait_and_press_h(win):
         if time.time() - start_time > timeout:
             log("等待超时，强制继续")
             break
-
-        # 点点屏幕中心
-        # center_pos = (1920/2,1080/2)  # 示例为屏幕中心，请替换为实际坐标
-        # center_pos = get_scale_point(center_pos, *get_window_width_and_height(win))
-        # center_pos = point_add_win(center_pos, win)  # 将窗口位置添加到点击位置
-        # pyautogui.click(center_pos)
 
         time.sleep(2)
 
