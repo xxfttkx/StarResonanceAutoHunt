@@ -127,3 +127,5 @@ def wait_and_press_h(win):
     keyboard.press_and_release('p')
     time.sleep(0.3)
     keyboard.press_and_release('h')
+    time.sleep(0.3)
+    # keyboard.press_and_release('2')

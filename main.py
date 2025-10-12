@@ -47,6 +47,7 @@ class AutoHuntController:
 
     def init(self):
         target_window = find_target_window()
+        # move_window_to_top_left(target_window)
         args = parse_args()
         self.initialize(target_window,args.offset,args.name,args.lines)
 
