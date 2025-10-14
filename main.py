@@ -56,6 +56,7 @@ class AutoHuntController:
         self.auto_switch = False
         self.auto_switch_set = False
         self.lock = threading.Lock()  # 真锁
+        self.logic_current_line = 0
         self.target_line = 0  # 目标线路编号
         self.offset = offset
         self.lines = lines
@@ -65,15 +66,17 @@ class AutoHuntController:
         # self.target_group = ["小猪·闪闪","娜宝·银辉","娜宝·闪闪"]
         self.target_group = enemy_names if enemy_names else ["小猪·爱","小猪·风"]
         self.enemy_listener = None
-
-    def get_curr_line(self):
-        if self.target_line==0:
-            return game_logic.get_curr_line(self.target_window)
-        else:
-            return self.target_line
+    
+    def cal_curr_line(self):
+        if self.logic_current_line == 0:
+            self.cal_curr_line_by_screenshot()
+    
+    def cal_curr_line_by_screenshot(self):
+        self.logic_current_line = game_logic.get_curr_line(self.target_window)
+        log(f"当前线路: {self.logic_current_line}")
 
     def cal_target_line(self, offset):
-        logic_current_line = self.get_curr_line()
+        self.cal_curr_line()
         lines = self.lines
         def get_next_line(lines, line):
             if line in lines:
@@ -83,12 +86,12 @@ class AutoHuntController:
                 else:
                     return -1
             return -1
-        next_line = get_next_line(lines, logic_current_line)
+        next_line = get_next_line(lines, self.logic_current_line)
         log(f"next_line {next_line}")
         if next_line != -1:
             self.target_line = next_line
             return None
-        self.target_line = logic_current_line + offset
+        self.target_line = self.logic_current_line + offset
         # 线路数越界
         if self.target_line > 200:
             self.target_line = 1
@@ -102,6 +105,7 @@ class AutoHuntController:
             self.cal_target_line(offset)
             game_logic.switch_line(self.target_window, self.target_line)
             game_logic.wait_and_press_h(self.target_window)
+            self.logic_current_line = self.target_line
         except Exception as e:
             log(f"热键执行失败: {e}")
 

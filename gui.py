@@ -20,7 +20,7 @@ def start_asyncio_loop(controller):
         log_error("程序已在运行中，请勿重复点击启动按钮。")
 
 def cal_line(controller):
-    pass
+    controller.cal_curr_line_by_screenshot()
 
 def do_something(controller):
     pass
