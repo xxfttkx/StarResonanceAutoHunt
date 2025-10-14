@@ -1,3 +1,4 @@
+import os
 import sys
 import threading
 import asyncio
@@ -17,6 +18,12 @@ def start_asyncio_loop(controller):
         asyncio.run(controller.startAutoHunt())
     else:
         log_error("程序已在运行中，请勿重复点击启动按钮。")
+
+def cal_line(controller):
+    pass
+
+def do_something(controller):
+    pass
 
 def start_gui():
     controller = AutoHuntController()
@@ -124,6 +131,36 @@ def start_gui():
     tk.Button(btn_frame, text="顺序填充 1~200", command=lambda: fill_lines("asc")).pack(side="left", padx=5)
     tk.Button(btn_frame, text="逆序填充 200~1", command=lambda: fill_lines("desc")).pack(side="left", padx=5)
 
+    # ✅ 在输入框下方新增两个按钮
+    button_frame = tk.Frame(left_frame, bg="#f0f4f7")
+    button_frame.pack(fill="x", pady=(5, 15))
+
+    btn1 = tk.Button(
+        button_frame,
+        text="识别当前路线",
+        font=("Microsoft YaHei", 12),
+        width=15,
+        height=2,
+        bg="#2196F3",
+        fg="white",
+        relief="flat",
+        command=lambda: cal_line(controller=controller)
+    )
+    btn1.pack(side="left", padx=5)
+
+    btn2 = tk.Button(
+        button_frame,
+        text="占位",
+        font=("Microsoft YaHei", 12),
+        width=15,
+        height=2,
+        bg="#4CAF50",
+        fg="white",
+        relief="flat",
+        command=lambda: do_something(controller=controller)
+    )
+    btn2.pack(side="left", padx=5)
+
     # ================= 右边日志区域 =================
     right_frame = tk.Frame(root, bg="#ffffff")
     right_frame.grid(row=0, column=1, sticky="nswe", padx=20, pady=20)
@@ -182,7 +219,7 @@ def start_gui():
         bg="#E53935",
         fg="white",
         relief="flat",
-        command=root.quit
+        command=lambda: os._exit(0)
     )
     quit_btn.pack(side="left", padx=20)
 
