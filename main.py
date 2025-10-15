@@ -62,7 +62,7 @@ class AutoHuntController:
         self.lines = lines
         if not self.lines:
             self.lines = offset < 0 and list(range(200, 0, -1)) or list(range(1, 201))
-        self.delay = 1
+        self.delay = 0.5
         # self.target_group = ["小猪·闪闪","娜宝·银辉","娜宝·闪闪"]
         self.target_group = enemy_names if enemy_names else ["小猪·爱","小猪·风"]
         self.enemy_listener = None
@@ -136,6 +136,7 @@ class AutoHuntController:
             self.auto_switch_set = False
             self.auto_switch = False
             log("自动切线已关闭")
+            self.logic_current_line = 0
         else:
             self.auto_switch_set = True
             self.auto_switch = True
