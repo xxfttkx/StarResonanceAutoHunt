@@ -4,7 +4,8 @@ import threading
 import asyncio
 import tkinter as tk
 from tkinter import scrolledtext
-
+import ctypes
+ctypes.windll.shcore.SetProcessDpiAwareness(2) 
 from utils import log, log_error
 from main import AutoHuntController
 from text_redirector import TextRedirector  # 导入你的 main 函数
