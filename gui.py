@@ -23,8 +23,8 @@ def start_asyncio_loop(controller):
 def cal_line(controller):
     controller.cal_curr_line_by_screenshot()
 
-def do_something(controller):
-    pass
+def start_auto_switch_line(controller):
+    controller.changeAutoSwitch()
 
 def start_gui():
     controller = AutoHuntController()
@@ -151,14 +151,14 @@ def start_gui():
 
     btn2 = tk.Button(
         button_frame,
-        text="占位",
+        text="开关自动切线",
         font=("Microsoft YaHei", 12),
         width=15,
         height=2,
         bg="#4CAF50",
         fg="white",
         relief="flat",
-        command=lambda: do_something(controller=controller)
+        command=lambda: start_auto_switch_line(controller=controller)
     )
     btn2.pack(side="left", padx=5)
 
